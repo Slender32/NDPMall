@@ -1,0 +1,37 @@
+spring:
+  application:
+    name: fdp-server
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/fdp_shop_database
+    username: root
+    password: 123456xyz
+  data:
+    redis:
+      host: 192.168.254.131
+      port: 6379
+      password: 123456xyz
+      database: 2
+      lettuce:
+        pool:
+          max-wait: 1000
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    default-enum-type-handler: com.baomidou.mybatisplus.core.handlers.MybatisEnumTypeHandler
+  global-config:
+    db-config:
+      id-type: auto
+      update-strategy: not_null
+      logic-delete-field: deleted
+      logic-not-delete-value: 0
+      logic-delete-value: 1
+springdoc:
+  api-docs:
+    path: /api-docs
+    enabled: true
+  swagger-ui:
+    path: /index.html
+    enabled: true
+  packages-to-scan: com.slender.controller
+  paths-to-match: /**
