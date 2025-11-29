@@ -1,7 +1,27 @@
-package com.slender.constant;
+package com.slender.constant.user;
 
 public interface UserConstant {
-    String USER_AUTHORITY="USER";
-    String MERCHANT_AUTHORITY="MERCHANT";
-    String ADMINISTRATION_AUTHORITY="ADMINISTRATION";
+    
+    interface Authority {
+        String USER = "USER";
+        String MERCHANT = "MERCHANT";
+        String ADMINISTRATION = "ADMINISTRATION";
+    }
+    
+    interface DeleteStatus {
+        String DELETED = "DELETED";
+        String NORMAL = "NORMAL";
+    }
+
+    interface Status {
+        String NORMAL = "NORMAL";
+        String FROZEN = "FROZEN";
+    }
+
+    interface Gender {
+        String MALE = "MALE";
+        String FEMALE = "FEMALE";
+        String PROTECTED = "PROTECTED";
+    }
 }
+

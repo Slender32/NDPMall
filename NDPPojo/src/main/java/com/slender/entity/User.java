@@ -1,5 +1,6 @@
 package com.slender.entity;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.slender.annotation.Email;
 import com.slender.annotation.Phone;
 import com.slender.constant.user.UserConstant;
 import com.slender.dto.RegisterRequest;
@@ -35,6 +36,11 @@ public class User {
     @NotBlank(message = "密码不能为空")
     @Size(min = 32, max = 60, message = "密码格式不合法")
     private String password;
+
+    @Email
+    @Schema(description = "邮箱", requiredMode = Schema.RequiredMode.REQUIRED, example = "20377794@qq.com")
+    @NotBlank(message = "邮箱不能为空")
+    private String email;
 
     @Phone
     @Schema(description = "手机号", requiredMode = Schema.RequiredMode.REQUIRED, example = "13800138000")
@@ -82,9 +88,9 @@ public class User {
     private UserStatus status;
 
     public User(RegisterRequest registerRequest) {
-        this.userName = registerRequest.getUserName();
-        this.password = registerRequest.getPassword();
-        this.phoneNumber = registerRequest.getPhoneNumber();
-        this.authority = registerRequest.getAuthority();
+        this.userName=registerRequest.getUserName();
+        this.password=registerRequest.getPassword();
+        this.email=registerRequest.getEmail();
+        this.phoneNumber=registerRequest.getPhoneNumber();
     }
 }

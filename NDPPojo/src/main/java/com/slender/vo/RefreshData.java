@@ -1,4 +1,7 @@
 package com.slender.vo;
 
-public class RefreshData {
-}
+public record RefreshData(
+    Long uid,
+    String userName,
+    String accessToken
+){}
