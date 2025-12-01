@@ -5,7 +5,7 @@ import jakarta.validation.ConstraintValidatorContext;
 
 import java.util.regex.Pattern;
 
-public class PhoneValidator implements ConstraintValidator<Phone, String> {
+public final class PhoneValidator implements ConstraintValidator<Phone, String> {
     @Override
     public boolean isValid(String phone, ConstraintValidatorContext context) {
         if (phone == null || phone.isEmpty()) return true;

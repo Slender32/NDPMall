@@ -5,15 +5,16 @@ import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.slender.config.manager.FilterConfigManager;
 import com.slender.config.manager.ResponseWriterManager;
 import com.slender.config.manager.ValidatorManager;
-import com.slender.dto.LoginByPasswordRequest;
-import com.slender.exception.ValidationException;
+import com.slender.dto.authentication.LoginByPasswordRequest;
+import com.slender.exception.request.ValidationException;
 import com.slender.message.FilterMessage;
-import com.slender.model.PasswordAuthenticationToken;
+import com.slender.model.token.PasswordAuthenticationToken;
 import com.slender.result.Response;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -33,7 +34,6 @@ public class MultiPasswordFilter extends AbstractAuthenticationProcessingFilter 
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        log.info("password");
         try {
             final LoginByPasswordRequest loginByPasswordRequest = objectMapper.readValue(request.getInputStream(), LoginByPasswordRequest.class);
             validatorManager.validate(loginByPasswordRequest,true);

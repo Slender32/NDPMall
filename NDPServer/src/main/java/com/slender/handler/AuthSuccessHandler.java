@@ -2,12 +2,12 @@ package com.slender.handler;
 
 import com.slender.config.manager.JsonParserManager;
 import com.slender.config.manager.ResponseWriterManager;
-import com.slender.constant.RedisKey;
-import com.slender.constant.RedisTime;
+import com.slender.constant.other.RedisKey;
+import com.slender.constant.other.RedisTime;
 import com.slender.entity.User;
 import com.slender.message.FilterMessage;
-import com.slender.model.JwtAuthenticationToken;
-import com.slender.model.LoginDataCache;
+import com.slender.model.token.JwtAuthenticationToken;
+import com.slender.model.cache.LoginDataCache;
 import com.slender.result.Response;
 import com.slender.utils.JwtToolkit;
 import com.slender.vo.LoginData;
@@ -36,7 +36,7 @@ public class AuthSuccessHandler implements AuthenticationSuccessHandler {
         User user= (User) authentication.getPrincipal();
         LoginDataCache loginDataCache = new LoginDataCache(user.getUid(), user.getUserName(), user.getAuthority());
         redisTemplate.opsForValue().set(RedisKey.Authentication.USER_LOGIN_CACHE + user.getUid(),
-                jsonParser.format(loginDataCache), Duration.ofMillis(RedisTime.Authentication.ACCESS_TOKEN_EXPIRE_TIME));
+                jsonParser.format(loginDataCache), RedisTime.Authentication.ACCESS_TOKEN_EXPIRE_TIME);
         SecurityContextHolder.getContext().setAuthentication(new JwtAuthenticationToken(loginDataCache));
         responseWriterManager.write(Response.success(FilterMessage.LOGIN_SUCCESS,new LoginData(user.getUid(), user.getUserName(),
                 JwtToolkit.getAccessToken(user.getUid()),

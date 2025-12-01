@@ -1,12 +1,11 @@
 package com.slender.service.interfase;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.slender.dto.CaptchaRequest;
-import com.slender.dto.RegisterRequest;
-import com.slender.dto.ResetRequest;
-import com.slender.dto.UserUpdateRequest;
+import com.slender.dto.authentication.CaptchaRequest;
+import com.slender.dto.user.UserRegisterRequest;
+import com.slender.dto.user.UserResetRequest;
+import com.slender.dto.user.UserUpdateRequest;
 import com.slender.entity.User;
-import com.slender.result.Response;
 import com.slender.vo.RefreshData;
 
 import java.util.Optional;
@@ -17,9 +16,9 @@ public interface UserService extends IService<User> {
 
     void sendCaptcha(CaptchaRequest captchaRequest);
 
-    void register(RegisterRequest registerRequest);
+    void register(UserRegisterRequest userRegisterRequest);
 
-    boolean reset(ResetRequest resetRequest, User user);
+    boolean reset(UserResetRequest userResetRequest, User user);
 
     void update(UserUpdateRequest updateRequest, Long uid);
 

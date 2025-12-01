@@ -7,11 +7,6 @@ public interface UserConstant {
         String MERCHANT = "MERCHANT";
         String ADMINISTRATION = "ADMINISTRATION";
     }
-    
-    interface DeleteStatus {
-        String DELETED = "DELETED";
-        String NORMAL = "NORMAL";
-    }
 
     interface Status {
         String NORMAL = "NORMAL";
@@ -22,6 +17,11 @@ public interface UserConstant {
         String MALE = "MALE";
         String FEMALE = "FEMALE";
         String PROTECTED = "PROTECTED";
+    }
+
+
+    interface Message {
+        String VALIDATION_ERROR = "用户信息验证失败";
     }
 }
 

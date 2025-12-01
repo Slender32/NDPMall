@@ -1,4 +1,7 @@
 package com.slender.entity;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.slender.constant.other.EntityConstant;
+import com.slender.enumeration.DeleteStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PastOrPresent;
@@ -12,7 +15,8 @@ import java.time.LocalDateTime;
 public class Category {
 
     @Schema(description = "分类ID", example = "101", accessMode = Schema.AccessMode.READ_ONLY)
-    private Integer cid;
+    @TableId("cid")
+    private Long cid;
 
     @Schema(description = "创建时间", accessMode = Schema.AccessMode.READ_ONLY)
     @PastOrPresent(message = "创建时间不得超前于当前时间")
@@ -26,4 +30,9 @@ public class Category {
     @NotBlank(message = "分类名称不能为空")
     @Size(min = 1, max = 20, message = "分类名称长度必须在1到20个字符之间")
     private String kindName;
+
+    @Schema(description = "删除标记",
+            allowableValues = {EntityConstant.Delete.DELETED, EntityConstant.Delete.NORMAL},
+            accessMode = Schema.AccessMode.READ_ONLY)
+    private DeleteStatus deleted;
 }

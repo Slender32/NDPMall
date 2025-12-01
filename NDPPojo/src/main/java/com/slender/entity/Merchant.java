@@ -1,5 +1,8 @@
 package com.slender.entity;
 
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.slender.constant.other.EntityConstant;
+import com.slender.enumeration.DeleteStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.Data;
@@ -11,7 +14,8 @@ import java.time.LocalDateTime;
 public class Merchant {
 
     @Schema(description = "商家ID", example = "1001", accessMode = Schema.AccessMode.READ_ONLY)
-    private Integer mid;
+    @TableId("mid")
+    private Long mid;
 
     @Schema(description = "创建时间", accessMode = Schema.AccessMode.READ_ONLY)
     @PastOrPresent(message = "创建时间不得超前于当前时间")
@@ -24,7 +28,7 @@ public class Merchant {
     @Schema(description = "归属的用户ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "2001")
     @NotNull(message = "用户ID不能为空")
     @Positive(message = "用户ID必须为正整数")
-    private Integer uid;
+    private Long uid;
 
     @Schema(description = "店铺名称", requiredMode = Schema.RequiredMode.REQUIRED, example = "数码优选旗舰店")
     @NotBlank(message = "店铺名称不能为空")
@@ -34,4 +38,9 @@ public class Merchant {
     @Schema(description = "品牌名", example = "TechBrand")
     @Size(max = 20, message = "品牌名长度不能超过20个字符")
     private String brandName;
+
+    @Schema(description = "删除标记",
+            allowableValues = {EntityConstant.Delete.DELETED, EntityConstant.Delete.NORMAL},
+            accessMode = Schema.AccessMode.READ_ONLY)
+    private DeleteStatus deleted;
 }

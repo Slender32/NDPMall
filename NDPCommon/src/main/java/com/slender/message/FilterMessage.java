@@ -9,6 +9,7 @@ public interface FilterMessage {
     String CAPTCHA_EXPIRED = "验证码已过期";
     String CAPTCHA_ERROR = "验证码错误";
     String LOGOUT_SUCCESS = "登出成功";
+    String HAS_LOGIN_ERROR = "您已登录";
 
     static String getMessage(String column) {
         return (switch (column) {

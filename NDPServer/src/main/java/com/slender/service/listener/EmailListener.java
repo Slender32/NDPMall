@@ -1,7 +1,7 @@
 package com.slender.service.listener;
 
 import com.slender.config.manager.JsonParserManager;
-import com.slender.model.EmailMessage;
+import com.slender.model.message.EmailMessage;
 import com.slender.service.interfase.EmailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

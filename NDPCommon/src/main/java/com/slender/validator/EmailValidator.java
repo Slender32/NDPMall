@@ -6,7 +6,7 @@ import jakarta.validation.ConstraintValidatorContext;
 
 import java.util.regex.Pattern;
 
-public class EmailValidator implements ConstraintValidator<Email, String> {
+public final class EmailValidator implements ConstraintValidator<Email, String> {
     @Override
     public boolean isValid(String email, ConstraintValidatorContext constraintValidatorContext) {
         if (email == null || email.isEmpty()) return true;

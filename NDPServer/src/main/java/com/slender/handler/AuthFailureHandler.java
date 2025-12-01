@@ -1,7 +1,7 @@
 package com.slender.handler;
 
 import com.slender.config.manager.ResponseWriterManager;
-import com.slender.exception.LoginException;
+import com.slender.exception.authentication.login.LoginException;
 import com.slender.result.Response;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

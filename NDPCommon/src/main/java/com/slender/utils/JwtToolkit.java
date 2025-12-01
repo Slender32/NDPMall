@@ -1,6 +1,6 @@
 package com.slender.utils;
 
-import com.slender.constant.JwtConstant;
+import com.slender.constant.other.JwtConstant;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 

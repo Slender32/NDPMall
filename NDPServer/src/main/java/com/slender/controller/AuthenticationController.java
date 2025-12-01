@@ -1,6 +1,10 @@
 package com.slender.controller;
 
-import com.slender.dto.*;
+import com.slender.dto.authentication.CaptchaRequest;
+import com.slender.dto.authentication.LoginByCaptchaRequest;
+import com.slender.dto.authentication.LoginByPasswordRequest;
+import com.slender.dto.user.UserRegisterRequest;
+import com.slender.dto.user.UserResetRequest;
 import com.slender.entity.User;
 import com.slender.result.Response;
 import com.slender.service.interfase.UserService;
@@ -42,21 +46,21 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     @Operation(summary = "注册")
-    public Response<Void> register(@RequestBody @Validated RegisterRequest registerRequest){
-        userService.register(registerRequest);
+    public Response<Void> register(@RequestBody @Validated UserRegisterRequest userRegisterRequest){
+        userService.register(userRegisterRequest);
         return Response.success("注册成功");
     }
 
     @PostMapping("/reset")
     @Operation(summary = "重置密码")
-    public Response<Void> reset(@RequestBody @Validated ResetRequest resetRequest, @AuthenticationPrincipal User user){
-        return userService.reset(resetRequest,user) ?
+    public Response<Void> reset(@RequestBody @Validated UserResetRequest userResetRequest, @AuthenticationPrincipal User user){
+        return userService.reset(userResetRequest,user) ?
                 Response.success("重置密码成功") :
                 Response.fail("重置密码失败");
     }
 
     @GetMapping("/refresh")
-    @Operation(summary = "重置密码")
+    @Operation(summary = "刷新token")
     public Response<RefreshData> refresh(@AuthenticationPrincipal Long uid){
         return Response.success("token刷新成功",userService.refresh(uid));
     }

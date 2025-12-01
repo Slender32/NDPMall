@@ -1,7 +1,7 @@
 package com.slender.enumeration.authentication;
 
-import com.slender.constant.EmailConstant;
-import com.slender.constant.RedisKey;
+import com.slender.constant.other.EmailConstant;
+import com.slender.constant.other.RedisKey;
 
 public enum CaptchaType {
     LOGIN,

@@ -13,8 +13,8 @@ import com.slender.provider.CaptchaProvider;
 import com.slender.provider.PasswordProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -24,6 +24,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
+@EnableMethodSecurity
 public class SecurityConfiguration {
     public interface SecurityURLManager {
         String LOGIN_PASSWORD = "/auth/login/password";
@@ -33,6 +34,7 @@ public class SecurityConfiguration {
         String RESET = "/auth/reset";
         String LOGOUT = "/auth/logout";
         String REFRESH = "/auth/refresh";
+        String API = "/api-docs";
     }
 
     @Bean
@@ -50,7 +52,8 @@ public class SecurityConfiguration {
                 .addPOSTURIConfig(SecurityURLManager.LOGIN_CAPTCHA, false)
                 .addPOSTURIConfig(SecurityURLManager.REGISTER, false)
                 .addPOSTURIConfig(SecurityURLManager.RESET, true)
-                .addGETURIConfig(SecurityURLManager.REFRESH,true);
+                .addGETURIConfig(SecurityURLManager.REFRESH,true)
+                .addGETURIConfig(SecurityURLManager.API,true);
     }
 
     @Bean
@@ -58,6 +61,7 @@ public class SecurityConfiguration {
                                            SecurityExceptionHandler securityExceptionHandler,
                                            SignOutSuccessHandler signOutSuccessHandler,
                                            SignOutHandler signOutHandler,
+                                           AccessRefuseHandler accessRefuseHandler,
                                            MultiPasswordFilter multiPasswordFilter,
                                            RequestTypeFilter requestTypeFilter,
                                            JwtFilter jwtFilter,
@@ -74,8 +78,6 @@ public class SecurityConfiguration {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/users/**").hasAnyAuthority
-                                (UserConstant.Authority.USER,UserConstant.Authority.MERCHANT, UserConstant.Authority.ADMINISTRATION)
                         .requestMatchers("/merchants/**").hasAnyAuthority(UserConstant.Authority.MERCHANT, UserConstant.Authority.ADMINISTRATION)
                         .requestMatchers("/admins/**").hasAnyAuthority(UserConstant.Authority.ADMINISTRATION)
 
@@ -85,7 +87,9 @@ public class SecurityConfiguration {
                 .addFilterBefore(captchaFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(requestTypeFilter,JwtFilter.class)
-                .exceptionHandling(configurer -> configurer.authenticationEntryPoint(securityExceptionHandler))
+                .exceptionHandling(configurer -> configurer
+                        .authenticationEntryPoint(securityExceptionHandler)
+                        .accessDeniedHandler(accessRefuseHandler))
                 .build();
     }
 

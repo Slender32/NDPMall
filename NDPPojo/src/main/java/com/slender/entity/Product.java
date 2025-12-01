@@ -1,28 +1,38 @@
 package com.slender.entity;
 
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.slender.constant.other.EntityConstant;
+import com.slender.constant.product.ProductConstant;
+import com.slender.dto.product.ProductListRequest;
+import com.slender.enumeration.DeleteStatus;
+import com.slender.enumeration.product.ProductStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
 @Schema(description = "商品信息")
-public class Product {
+@NoArgsConstructor
+public class Product implements Serializable {
 
     @Schema(description = "产品ID", example = "1001", accessMode = Schema.AccessMode.READ_ONLY)
-    private Integer pid;
+    @TableId("pid")
+    private Long pid;
 
     @Schema(description = "商家ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "201")
     @NotNull(message = "商家ID不能为空")
     @Positive(message = "商家ID必须为正整数")
-    private Integer mid;
+    private Long mid;
 
     @Schema(description = "分类ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "301")
     @NotNull(message = "分类ID不能为空")
     @Positive(message = "分类ID必须为正整数")
-    private Integer cid;
+    private Long cid;
 
     @Schema(description = "创建时间", accessMode = Schema.AccessMode.READ_ONLY)
     @PastOrPresent(message = "创建时间不得超前于当前时间")
@@ -38,16 +48,14 @@ public class Product {
     private String productName;
 
     @Schema(description = "库存", minimum = "0", example = "100")
-    @NotNull(message = "库存不能为空")
-    @Min(value = 0, message = "库存不能为负数")
+    @Positive(message = "库存必须为正整数")
     private Integer remain;
 
     @Schema(description = "销量", minimum = "0", example = "50", accessMode = Schema.AccessMode.READ_ONLY)
-    @Min(value = 0, message = "销量不能为负数")
+    @Positive(message = "销量必须为正整数")
     private Integer saleAmount;
 
     @Schema(description = "价格", requiredMode = Schema.RequiredMode.REQUIRED, example = "199.99")
-    @NotNull(message = "价格不能为空")
     @DecimalMin(value = "0.00", message = "价格不能为负数")
     private BigDecimal price;
 
@@ -55,18 +63,25 @@ public class Product {
     private String description;
 
     @Schema(description = "状态：0-上架 1-下架",
-            allowableValues = {"0", "1"},
-            example = "0")
+            allowableValues = {ProductConstant.Status.LIST, ProductConstant.Status.DELIST},
+            example = ProductConstant.Status.LIST)
     @NotNull(message = "状态不能为空")
-    @Min(value = 0, message = "状态值无效")
-    @Max(value = 1, message = "状态值无效")
-    private Integer status;
+    private ProductStatus status;
 
     @Schema(description = "删除标记：0-未删除 1-已删除",
-            allowableValues = {"0", "1"},
+            allowableValues = {EntityConstant.Delete.DELETED, EntityConstant.Delete.NORMAL},
             accessMode = Schema.AccessMode.READ_ONLY)
     @NotNull
-    @Min(0)
-    @Max(1)
-    private Integer deleted;
+    private DeleteStatus deleted;
+
+    public Product(Long uid, ProductListRequest request) {
+        this.mid = uid;
+        this.cid = request.getCid();
+        this.productName = request.getProductName();
+        this.remain = request.getRemain();
+        this.price = request.getPrice();
+        this.description = request.getDescription();
+        this.updateTime = LocalDateTime.now();
+    }
+
 }

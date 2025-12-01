@@ -1,7 +1,7 @@
 package com.slender.service.implement;
 
-import com.slender.constant.RedisKey;
-import com.slender.constant.RedisTime;
+import com.slender.constant.other.RedisKey;
+import com.slender.constant.other.RedisTime;
 import com.slender.enumeration.authentication.CaptchaType;
 import com.slender.service.interfase.EmailService;
 import com.slender.utils.StringToolkit;
@@ -54,8 +54,8 @@ public class EmailServiceImpl implements EmailService {
         }
         mailSender.send(email);
         redisTemplate.opsForValue().set(RedisKey.Authentication.CAPTCHA_REQUEST_CACHE + toEmail,
-                StringToolkit.getBlankString(), Duration.ofMillis(RedisTime.Authentication.CAPTCHA_REQUEST_TIME));
+                StringToolkit.getBlankString(), RedisTime.Authentication.CAPTCHA_REQUEST_TIME);
         redisTemplate.opsForValue().set(type.getRedisKey() + toEmail,
-                    String.valueOf(code), Duration.ofMillis(RedisTime.Authentication.CAPTCHA_EXPIRE_TIME));
+                    String.valueOf(code), RedisTime.Authentication.CAPTCHA_EXPIRE_TIME);
     }
 }

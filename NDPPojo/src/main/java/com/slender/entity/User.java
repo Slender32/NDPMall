@@ -2,10 +2,11 @@ package com.slender.entity;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.slender.annotation.Email;
 import com.slender.annotation.Phone;
+import com.slender.constant.other.EntityConstant;
 import com.slender.constant.user.UserConstant;
-import com.slender.dto.RegisterRequest;
+import com.slender.dto.user.UserRegisterRequest;
 import com.slender.enumeration.user.UserAuthority;
-import com.slender.enumeration.user.UserDeleted;
+import com.slender.enumeration.DeleteStatus;
 import com.slender.enumeration.user.UserGender;
 import com.slender.enumeration.user.UserStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -78,19 +79,21 @@ public class User {
     private UserAuthority authority;
 
     @Schema(description = "删除标记",
-            allowableValues = {UserConstant.DeleteStatus.DELETED, UserConstant.DeleteStatus.NORMAL},
+            allowableValues = {EntityConstant.Delete.DELETED, EntityConstant.Delete.NORMAL},
             accessMode = Schema.AccessMode.READ_ONLY)
-    private UserDeleted deleted;
+    private DeleteStatus deleted;
 
     @Schema(description = "账户状态：0-正常 1-冻结",
             allowableValues = {UserConstant.Status.NORMAL, UserConstant.Status.FROZEN},
             example = UserConstant.Status.NORMAL)
     private UserStatus status;
 
-    public User(RegisterRequest registerRequest) {
-        this.userName=registerRequest.getUserName();
-        this.password=registerRequest.getPassword();
-        this.email=registerRequest.getEmail();
-        this.phoneNumber=registerRequest.getPhoneNumber();
+    public User(UserRegisterRequest userRegisterRequest) {
+        this.userName= userRegisterRequest.getUserName();
+        this.password= userRegisterRequest.getPassword();
+        this.email= userRegisterRequest.getEmail();
+        this.phoneNumber= userRegisterRequest.getPhoneNumber();
+        updateTime=LocalDateTime.now();
+        createTime=LocalDateTime.now();
     }
 }

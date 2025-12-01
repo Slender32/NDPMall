@@ -33,7 +33,7 @@ public final class RequestConfigManager {
     }
 
     public RequestConfigManager addGETURIConfig(String uri, boolean requireToken){
-        requestConfigs.put(uri, new RequestConfig(HttpMethod.GET, MediaType.APPLICATION_JSON,requireToken));
+        requestConfigs.put(uri, new RequestConfig(HttpMethod.GET, null,requireToken));
         return this;
     }
 

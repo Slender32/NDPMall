@@ -1,6 +1,6 @@
 package com.slender.config.manager;
 
-import com.slender.exception.FilterNotURLException;
+import com.slender.exception.authentication.login.FilterNotURLException;
 import jakarta.servlet.Filter;
 
 import java.util.HashMap;
