@@ -1,6 +1,7 @@
 package com.slender.handler;
 
 import com.slender.config.manager.ResponseWriterManager;
+import com.slender.message.ExceptionMessage;
 import com.slender.result.Response;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,6 +17,6 @@ public class AccessRefuseHandler implements AccessDeniedHandler {
     private final ResponseWriterManager responseWriterManager;
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException){
-        responseWriterManager.write(Response.fail(HttpStatus.FORBIDDEN.value(),"权限不足"), response);
+        responseWriterManager.write(Response.fail(HttpStatus.FORBIDDEN.value(), ExceptionMessage.AUTHORITY_ERROR), response);
     }
 }

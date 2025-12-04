@@ -1,7 +1,13 @@
 package com.slender.handler;
 
 import com.slender.config.manager.ResponseWriterManager;
-import com.slender.exception.authentication.login.LoginException;
+import com.slender.exception.authentication.captcha.CaptchaMisMatchException;
+import com.slender.exception.authentication.captcha.CaptchaNotFoundException;
+import com.slender.exception.authentication.login.*;
+import com.slender.exception.category.ValidationException;
+import com.slender.exception.request.RequestContentException;
+import com.slender.exception.request.RequestMethodException;
+import com.slender.message.ExceptionMessage;
 import com.slender.result.Response;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,11 +26,22 @@ public class AuthFailureHandler implements AuthenticationFailureHandler {
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) {
-        switch (exception) {
-            case LoginException loginException ->
-                    responseWriterManager.write(Response.fail(HttpStatus.UNAUTHORIZED.value(), loginException.getMessage()), response);
-            default ->
-                    responseWriterManager.write(Response.fail(HttpStatus.INTERNAL_SERVER_ERROR.value(), "未知原因导致登陆失败"), response);
-        }
+        final Response<Void> responseData= switch (exception){
+            case TokenNotFoundException _ -> Response.fail(HttpStatus.UNAUTHORIZED.value(), ExceptionMessage.TOKEN_NOT_FOUND);
+            case TokenSignatureException _ -> Response.fail(HttpStatus.BAD_REQUEST.value(), ExceptionMessage.TOKEN_SIGNATURE_ERROR);
+            case TokenExpiredException _ -> Response.fail(HttpStatus.UNAUTHORIZED.value(), ExceptionMessage.TOKEN_EXPIRE_ERROR);
+            case BlockException _ -> Response.fail(HttpStatus.FORBIDDEN.value(), ExceptionMessage.BLOCK_ERROR);
+            case LoginNotExpiredException _ -> Response.fail(HttpStatus.BAD_REQUEST.value(), ExceptionMessage.LOGIN_NOT_EXPIRED_ERROR);
+            case LoginExpiredException _ -> Response.fail(HttpStatus.UNAUTHORIZED.value(), ExceptionMessage.LOGIN_EXPIRED_ERROR);
+            case RequestMethodException _ -> Response.fail(HttpStatus.BAD_REQUEST.value(), ExceptionMessage.REQUEST_METHOD_ERROR);
+            case RequestContentException _ -> Response.fail(HttpStatus.BAD_REQUEST.value(), ExceptionMessage.REQUEST_BODY_ERROR);
+            case ValidationException e -> Response.fail(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            case LoginPersistenceException _ -> Response.fail(HttpStatus.INTERNAL_SERVER_ERROR.value(), ExceptionMessage.HAS_LOGIN_ERROR);
+            case CaptchaNotFoundException _ -> Response.fail(HttpStatus.BAD_REQUEST.value(), ExceptionMessage.CAPTCHA_NOT_FOUND);
+            case CaptchaMisMatchException _ -> Response.fail(HttpStatus.BAD_REQUEST.value(), ExceptionMessage.CAPTCHA_ERROR);
+            case EmailNotFoundException _ -> Response.fail(HttpStatus.BAD_REQUEST.value(), ExceptionMessage.EMAIL_ERROR);
+            default -> Response.fail(ExceptionMessage.INTERNAL_ERROR);
+        };
+        responseWriterManager.write(responseData, response);
     }
 }

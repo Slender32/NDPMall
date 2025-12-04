@@ -1,6 +1,6 @@
 package com.slender.config.manager;
 
-import com.slender.exception.authentication.login.FilterNotURLException;
+import com.slender.exception.config.URLConfigNotFoundException;
 import jakarta.servlet.Filter;
 
 import java.util.HashMap;
@@ -15,7 +15,7 @@ public final class FilterConfigManager {
 
     public String getFilterURL(Class<? extends Filter> filter){
         String url = filterConfigs.getOrDefault(filter, null);
-        if(url==null) throw new FilterNotURLException("未配置该过滤器的URL");
+        if(url==null) throw new URLConfigNotFoundException();
         return url;
     }
 }

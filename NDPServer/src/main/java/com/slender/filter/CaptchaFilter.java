@@ -1,9 +1,12 @@
 package com.slender.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.slender.config.manager.FilterConfigManager;
 import com.slender.config.manager.ValidatorManager;
 import com.slender.dto.authentication.LoginByCaptchaRequest;
+import com.slender.exception.request.RequestContentException;
+import com.slender.message.FilterMessage;
 import com.slender.model.token.CaptchaAuthenticationToken;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -25,14 +28,16 @@ public class CaptchaFilter extends AbstractAuthenticationProcessingFilter {
     }
 
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException{
         try {
             LoginByCaptchaRequest loginByCaptchaRequest = objectMapper.readValue(request.getInputStream(), LoginByCaptchaRequest.class);
-            validatorManager.validate(loginByCaptchaRequest,true);
+            validatorManager.validate(loginByCaptchaRequest);
             return getAuthenticationManager().authenticate(new CaptchaAuthenticationToken(
                     loginByCaptchaRequest.getEmail(), loginByCaptchaRequest.getCaptcha()));
-        } catch (IOException e) {
-            log.error("",e);
+        }catch (NullPointerException | MismatchedInputException _){
+            throw new RequestContentException();
+        }catch (IOException e) {
+            log.info(FilterMessage.REQUEST_READ_ERROR,e);
         }
         return null;
     }

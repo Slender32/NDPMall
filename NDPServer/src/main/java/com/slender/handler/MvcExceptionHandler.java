@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class MvcExceptionHandler {
     @ExceptionHandler
     public Response<Void> handleException(Exception e){
-        log.error("捕获异常:{}",e.getMessage(),e);
+        log.error("捕获异常",e);
         return Response.fail(e.getMessage());
     }
 

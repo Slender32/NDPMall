@@ -1,5 +1,7 @@
 package com.slender.exception.json;
 
-public class JsonFormatException extends RuntimeException {
+import com.slender.exception.category.JsonException;
+
+public class JsonFormatException extends JsonException {
 
 }

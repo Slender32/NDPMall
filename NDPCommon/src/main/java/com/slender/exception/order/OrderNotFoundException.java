@@ -1,4 +1,6 @@
 package com.slender.exception.order;
 
-public class OrderNotFoundException extends RuntimeException {
+import com.slender.exception.category.OrderException;
+
+public class OrderNotFoundException extends OrderException {
 }

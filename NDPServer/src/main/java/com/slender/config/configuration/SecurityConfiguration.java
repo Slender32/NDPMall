@@ -4,10 +4,7 @@ import com.slender.config.manager.AuthenticationTokenManager;
 import com.slender.config.manager.FilterConfigManager;
 import com.slender.config.manager.RequestConfigManager;
 import com.slender.constant.user.UserConstant;
-import com.slender.filter.CaptchaFilter;
-import com.slender.filter.JwtFilter;
-import com.slender.filter.MultiPasswordFilter;
-import com.slender.filter.RequestTypeFilter;
+import com.slender.filter.*;
 import com.slender.handler.*;
 import com.slender.provider.CaptchaProvider;
 import com.slender.provider.PasswordProvider;
@@ -22,6 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 @Configuration
 @EnableMethodSecurity
@@ -53,14 +51,15 @@ public class SecurityConfiguration {
                 .addPOSTURIConfig(SecurityURLManager.REGISTER, false)
                 .addPOSTURIConfig(SecurityURLManager.RESET, true)
                 .addGETURIConfig(SecurityURLManager.REFRESH,true)
-                .addGETURIConfig(SecurityURLManager.API,true);
+                .addGETURIConfig(SecurityURLManager.API,false)
+                .addDELETEURIConfig(SecurityURLManager.LOGOUT,true);
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http,
                                            SecurityExceptionHandler securityExceptionHandler,
-                                           SignOutSuccessHandler signOutSuccessHandler,
                                            SignOutHandler signOutHandler,
+                                           SignOutSuccessHandler signOutSuccessHandler,
                                            AccessRefuseHandler accessRefuseHandler,
                                            MultiPasswordFilter multiPasswordFilter,
                                            RequestTypeFilter requestTypeFilter,
@@ -72,20 +71,18 @@ public class SecurityConfiguration {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .logout(logout -> logout
                         .logoutUrl(SecurityURLManager.LOGOUT)
-                        .logoutSuccessHandler(signOutSuccessHandler)
                         .addLogoutHandler(signOutHandler)
-                        .permitAll()
+                        .logoutSuccessHandler(signOutSuccessHandler)
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/merchants/**").hasAnyAuthority(UserConstant.Authority.MERCHANT, UserConstant.Authority.ADMINISTRATION)
-                        .requestMatchers("/admins/**").hasAnyAuthority(UserConstant.Authority.ADMINISTRATION)
-
+                        .requestMatchers("/admins/**").hasAuthority(UserConstant.Authority.ADMINISTRATION)
                         .anyRequest().authenticated()
                 )
                 .addFilterAt(multiPasswordFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(captchaFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(captchaFilter, MultiPasswordFilter.class)
+                .addFilterBefore(jwtFilter, LogoutFilter.class)
                 .addFilterBefore(requestTypeFilter,JwtFilter.class)
                 .exceptionHandling(configurer -> configurer
                         .authenticationEntryPoint(securityExceptionHandler)
@@ -118,6 +115,7 @@ public class SecurityConfiguration {
         captchaFilter.setAuthenticationSuccessHandler(authSuccessHandler);
         return captchaFilter;
     }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

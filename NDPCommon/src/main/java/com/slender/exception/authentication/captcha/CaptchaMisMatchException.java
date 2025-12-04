@@ -2,6 +2,6 @@ package com.slender.exception.authentication.captcha;
 
 import com.slender.exception.category.CaptchaException;
 
-public class CaptchaNotFoundException extends CaptchaException {
+public class CaptchaMisMatchException extends CaptchaException {
 
 }

@@ -1,5 +1,7 @@
 package com.slender.exception.authentication.captcha;
 
-public class CaptchaPersistenceException extends RuntimeException {
+import com.slender.exception.category.CaptchaException;
+
+public class CaptchaPersistenceException extends CaptchaException {
 
 }

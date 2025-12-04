@@ -1,6 +1,6 @@
 package com.slender.exception.request;
 
-public class RequestContentException extends RuntimeException {
-    public RequestContentException() {
-    }
+import com.slender.exception.category.RequestException;
+
+public class RequestContentException extends RequestException {
 }

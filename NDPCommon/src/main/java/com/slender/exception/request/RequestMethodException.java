@@ -1,6 +1,6 @@
 package com.slender.exception.request;
 
-public class RequestMethodException extends RuntimeException {
-    public RequestMethodException() {
-    }
+import com.slender.exception.category.RequestException;
+
+public class RequestMethodException extends RequestException {
 }

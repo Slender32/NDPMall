@@ -21,8 +21,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
-import java.time.Duration;
-
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -34,12 +32,12 @@ public class AuthSuccessHandler implements AuthenticationSuccessHandler {
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication){
         User user= (User) authentication.getPrincipal();
-        LoginDataCache loginDataCache = new LoginDataCache(user.getUid(), user.getUserName(), user.getAuthority());
+        LoginDataCache loginDataCache = new LoginDataCache(user.getUid(), user.getUserName(), user.getEmail(), user.getAuthority());
         redisTemplate.opsForValue().set(RedisKey.Authentication.USER_LOGIN_CACHE + user.getUid(),
                 jsonParser.format(loginDataCache), RedisTime.Authentication.ACCESS_TOKEN_EXPIRE_TIME);
         SecurityContextHolder.getContext().setAuthentication(new JwtAuthenticationToken(loginDataCache));
         responseWriterManager.write(Response.success(FilterMessage.LOGIN_SUCCESS,new LoginData(user.getUid(), user.getUserName(),
                 JwtToolkit.getAccessToken(user.getUid()),
-                JwtToolkit.getAccessToken(user.getUid()))),response);
+                JwtToolkit.getRefreshToken(user.getUid()))),response);
     }
 }

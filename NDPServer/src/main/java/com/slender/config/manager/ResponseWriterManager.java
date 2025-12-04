@@ -1,5 +1,6 @@
 package com.slender.config.manager;
 
+import com.slender.exception.category.ResponseException;
 import com.slender.result.Response;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +12,7 @@ import java.io.IOException;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class ResponseWriterManager {
+public final class ResponseWriterManager {
     private final JsonParserManager jsonParser;
 
     public <T> void write(Response<T> data, HttpServletResponse response){
@@ -20,7 +21,7 @@ public class ResponseWriterManager {
             response.setContentType("application/json;charset=utf-8");
             response.getWriter().write(jsonParser.format(data));
         } catch (IOException e) {
-            log.error("HttpServletResponse写入失败",e);
+            throw new ResponseException();
         }
     }
 }

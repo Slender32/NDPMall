@@ -6,14 +6,12 @@ import com.slender.exception.json.JsonFormatException;
 import com.slender.exception.json.JsonParseException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.serializer.RedisSerializer;
-import org.springframework.data.redis.serializer.SerializationException;
 import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class JsonParserManager{
+public final class JsonParserManager{
     private final ObjectMapper objectMapper;
 
     public <T> T parse(String json, Class<T> clazz) {

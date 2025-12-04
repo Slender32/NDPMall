@@ -1,9 +1,6 @@
 package com.slender.exception.request;
 
-import org.springframework.security.core.AuthenticationException;
+import com.slender.exception.category.RequestException;
 
-public class FrequentRequestCaptchaException extends AuthenticationException {
-    public FrequentRequestCaptchaException(String message) {
-        super(message);
-    }
+public class FrequentRequestCaptchaException extends RequestException {
 }

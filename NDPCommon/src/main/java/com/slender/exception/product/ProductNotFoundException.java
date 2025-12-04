@@ -1,5 +1,7 @@
 package com.slender.exception.product;
 
-public class ProductNotFoundException extends RuntimeException {
+import com.slender.exception.category.ProductException;
+
+public class ProductNotFoundException extends ProductException {
 
 }
