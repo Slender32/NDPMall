@@ -6,4 +6,5 @@ public interface UserMessage {
     String PHONE_NUMBER_OR_PASSWORD_ERROR="手机号或密码错误";
     String REGISTRY_FAILURE ="注册失败";
     String REGISTRY_SUCCESS ="注册成功";
+    String LOGIN_SUCCESS ="登录成功";
 }

@@ -6,7 +6,7 @@ import com.slender.config.manager.FilterConfigManager;
 import com.slender.config.manager.ValidatorManager;
 import com.slender.dto.authentication.LoginByPasswordRequest;
 import com.slender.exception.request.RequestContentException;
-import com.slender.message.FilterMessage;
+import com.slender.message.ExceptionMessage;
 import com.slender.model.token.PasswordAuthenticationToken;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -40,7 +40,7 @@ public class MultiPasswordFilter extends AbstractAuthenticationProcessingFilter 
         }catch (NullPointerException | MismatchedInputException exception ){
             throw new RequestContentException();
         }catch (IOException e){
-            log.error(FilterMessage.REQUEST_READ_ERROR,e);
+            log.error(ExceptionMessage.REQUEST_READ_ERROR,e);
         }
         return null;
     }
