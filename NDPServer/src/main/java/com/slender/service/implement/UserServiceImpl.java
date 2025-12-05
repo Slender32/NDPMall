@@ -2,16 +2,21 @@ package com.slender.service.implement;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.slender.config.manager.JsonParserManager;
+import com.slender.config.manager.UserValidatorManager;
 import com.slender.constant.other.RabbitMQConstant;
 import com.slender.constant.other.RedisKey;
 import com.slender.constant.other.RedisTime;
 import com.slender.dto.authentication.CaptchaRequest;
+import com.slender.dto.authentication.LogoffRequest;
 import com.slender.dto.user.UserRegisterRequest;
 import com.slender.dto.user.UserResetRequest;
 import com.slender.dto.user.UserUpdateRequest;
 import com.slender.entity.User;
-import com.slender.exception.authentication.login.UserNotFoundException;
-import com.slender.exception.authentication.captcha.CaptchaErrorException;
+import com.slender.enumeration.authentication.CaptchaType;
+import com.slender.enumeration.authentication.ResetType;
+import com.slender.exception.authentication.login.LoginStatusException;
+import com.slender.exception.user.UserNotFoundException;
+import com.slender.exception.authentication.captcha.CaptchaMisMatchException;
 import com.slender.exception.authentication.captcha.CaptchaPersistenceException;
 import com.slender.exception.request.FrequentRequestCaptchaException;
 import com.slender.mapper.UserMapper;
@@ -20,6 +25,7 @@ import com.slender.model.cache.LoginDataCache;
 import com.slender.repository.UserRepository;
 import com.slender.service.interfase.UserService;
 import com.slender.utils.JwtToolkit;
+import com.slender.utils.StringToolkit;
 import com.slender.vo.RefreshData;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +34,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -40,6 +46,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private final RabbitTemplate rabbitTemplate;
     private final JsonParserManager jsonParser;
     private final PasswordEncoder passwordEncoder;
+    private final UserValidatorManager userValidatorManager;
 
     @Override
     public Optional<User> getByDataBaseColumn(String column, String value) {
@@ -63,22 +70,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public void register(UserRegisterRequest userRegisterRequest) {
-        String captcha = redisTemplate.opsForValue().get(RedisKey.Authentication.CAPTCHA_REGISTER_CACHE + userRegisterRequest.getEmail());
-        if (captcha == null) throw new CaptchaPersistenceException();
-        if (!userRegisterRequest.getCaptcha().toString().equals(captcha)) throw new CaptchaErrorException();
-        redisTemplate.delete(RedisKey.Authentication.CAPTCHA_REGISTER_CACHE + userRegisterRequest.getEmail());
-        userRegisterRequest.setPassword(passwordEncoder.encode(userRegisterRequest.getPassword()));
-        userRepository.add(userRegisterRequest);
+    public void register(UserRegisterRequest registerRequest) {
+        userValidatorManager.validateCaptcha(registerRequest.getEmail(), registerRequest.getCaptcha());
+        registerRequest.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+        this.save(new User(registerRequest));
     }
 
     @Override
-    public boolean reset(UserResetRequest userResetRequest, User user) {
-        String captcha = redisTemplate.opsForValue().get(RedisKey.Authentication.CAPTCHA_RESET_CACHE + user.getUid());
-        if (captcha == null) throw new CaptchaPersistenceException();
-        if (!userResetRequest.getCaptcha().toString().equals(captcha)) throw new CaptchaErrorException();
-        redisTemplate.delete(RedisKey.Authentication.CAPTCHA_RESET_CACHE + user.getUid());
-        return userRepository.updatePassword(passwordEncoder.encode(userResetRequest.getPassword()), user.getUid());
+    public void reset(UserResetRequest resetRequest, Long uid) {
+        userValidatorManager.validateCaptcha(uid, resetRequest.getCaptcha(), CaptchaType.RESET);
+        if(resetRequest.getType() == ResetType.PASSWORD) resetRequest.setPassword(passwordEncoder.encode(resetRequest.getPassword()));
+        userRepository.update(resetRequest, uid);
     }
 
     @Override
@@ -89,9 +91,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public RefreshData refresh(Long uid) {
         return userRepository.findByUid(uid).map(user -> {
-            final String data = jsonParser.format(new LoginDataCache(user.getUid(), user.getUserName(), user.getAuthority()));
+            final String data = jsonParser.format(new LoginDataCache(user.getUid(), user.getUserName(), user.getEmail(), user.getAuthority()));
             redisTemplate.opsForValue().set(RedisKey.Authentication.USER_LOGIN_CACHE+uid,data, RedisTime.Authentication.ACCESS_TOKEN_EXPIRE_TIME);
             return new RefreshData(uid, user.getUserName(), JwtToolkit.getAccessToken(uid));
         }).orElseThrow(UserNotFoundException::new);
+    }
+
+    @Override
+    public void block(Long userUid) {
+        boolean delete = redisTemplate.delete(RedisKey.Authentication.USER_LOGIN_CACHE + userUid);
+        if(!delete) throw new LoginStatusException();
+        redisTemplate.opsForValue().set(RedisKey.Authentication.USER_BLOCK_CACHE+userUid,
+                StringToolkit.getBlankString(), RedisTime.Authentication.REFRESH_TOKEN_EXPIRE_TIME);
+    }
+
+    @Override
+    public void logoff(Long uid, LogoffRequest request) {
+        userValidatorManager.validateCaptcha(uid, request.getCaptcha(), CaptchaType.LOGOFF);
+        this.removeById(uid);
     }
 }

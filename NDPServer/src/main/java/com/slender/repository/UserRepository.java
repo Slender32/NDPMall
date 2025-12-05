@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.slender.constant.user.UserColumn;
 import com.slender.constant.user.UserConstant;
-import com.slender.dto.user.UserRegisterRequest;
+import com.slender.dto.user.UserResetRequest;
 import com.slender.dto.user.UserUpdateRequest;
 import com.slender.entity.User;
 import com.slender.mapper.UserMapper;
@@ -42,16 +42,13 @@ public class UserRepository {
         ));
     }
 
-    public void add(UserRegisterRequest userRegisterRequest) {
-        userMapper.insert(new User(userRegisterRequest));
-    }
-
-    public boolean updatePassword(String password, Long uid) {
-        return userMapper.update(
+    public void update(UserResetRequest request, Long uid){
+        userMapper.update(
                 new UpdateWrapper<User>()
                 .eq(UserColumn.UID, uid)
-                .set(UserColumn.PASSWORD, password)
-                .set(UserColumn.UPDATE_TIME, LocalDateTime.now())) != 0;
+                .set(UserColumn.UPDATE_TIME, LocalDateTime.now())
+                .set(request.getType().getColumn(), request.getValue())
+        );
     }
 
     public void update(UserUpdateRequest updateRequest, Long uid) {

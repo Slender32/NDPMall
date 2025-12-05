@@ -3,6 +3,7 @@ package com.slender.service.implement;
 import com.slender.constant.other.RedisKey;
 import com.slender.constant.other.RedisTime;
 import com.slender.enumeration.authentication.CaptchaType;
+import com.slender.exception.email.EmailSendFailedException;
 import com.slender.service.interfase.EmailService;
 import com.slender.utils.StringToolkit;
 import jakarta.mail.MessagingException;
@@ -17,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -40,7 +40,8 @@ public class EmailServiceImpl implements EmailService {
         context.setVariables(Map.of(
                 "code",code,
                 "messageTitle","NDP"+message+"验证码",
-                "message","您正在进行"+message+"操作，请使用以下验证码："));
+                "message","您正在进行"+message+"操作，请使用以下验证码：")
+        );
         String htmlContent = templateEngine.process("EmailVerificationCode", context);
         MimeMessage email = mailSender.createMimeMessage();
         try {
@@ -50,7 +51,8 @@ public class EmailServiceImpl implements EmailService {
             helper.setSubject("［NDP AutoClosure］"+message+"验证码");
             helper.setText(htmlContent,true);
         } catch (MessagingException e) {
-            log.info("邮件发送失败{}",toEmail);
+            log.error("邮件发送失败{}",toEmail);
+            throw new EmailSendFailedException();
         }
         mailSender.send(email);
         redisTemplate.opsForValue().set(RedisKey.Authentication.CAPTCHA_REQUEST_CACHE + toEmail,
