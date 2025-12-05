@@ -16,7 +16,6 @@ import com.slender.enumeration.authentication.CaptchaType;
 import com.slender.enumeration.authentication.ResetType;
 import com.slender.exception.authentication.login.LoginStatusException;
 import com.slender.exception.user.UserNotFoundException;
-import com.slender.exception.authentication.captcha.CaptchaMisMatchException;
 import com.slender.exception.authentication.captcha.CaptchaPersistenceException;
 import com.slender.exception.request.FrequentRequestCaptchaException;
 import com.slender.mapper.UserMapper;
@@ -34,7 +33,6 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
