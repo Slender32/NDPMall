@@ -24,5 +24,4 @@ public class RabbitMQConfiguration {
     public Binding captchaBinding() {
         return BindingBuilder.bind(captchaQueue()).to(emailExchange()).with("captcha");
     }
-
 }

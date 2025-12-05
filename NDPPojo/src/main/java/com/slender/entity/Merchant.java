@@ -2,15 +2,19 @@ package com.slender.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.slender.constant.other.EntityConstant;
+import com.slender.dto.merchant.MerchantRegisterRequest;
 import com.slender.enumeration.DeleteStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDateTime;
 
 @Data
 @Schema(description = "商家信息")
+@NoArgsConstructor
 public class Merchant {
 
     @Schema(description = "商家ID", example = "1001", accessMode = Schema.AccessMode.READ_ONLY)
@@ -32,15 +36,23 @@ public class Merchant {
 
     @Schema(description = "店铺名称", requiredMode = Schema.RequiredMode.REQUIRED, example = "数码优选旗舰店")
     @NotBlank(message = "店铺名称不能为空")
-    @Size(min = 1, max = 20, message = "店铺名称长度必须在1到20个字符之间")
+    @Length(min = 1, max = 20, message = "店铺名称长度必须在1到20个字符之间")
     private String shopName;
 
     @Schema(description = "品牌名", example = "TechBrand")
-    @Size(max = 20, message = "品牌名长度不能超过20个字符")
+    @Length(max = 20, message = "品牌名长度不能超过20个字符")
     private String brandName;
 
     @Schema(description = "删除标记",
             allowableValues = {EntityConstant.Delete.DELETED, EntityConstant.Delete.NORMAL},
             accessMode = Schema.AccessMode.READ_ONLY)
     private DeleteStatus deleted;
+
+    public Merchant(Long uid, MerchantRegisterRequest merchantRegisterRequest) {
+        this.uid=uid;
+        this.shopName=merchantRegisterRequest.getShopName();
+        this.brandName=merchantRegisterRequest.getBrandName();
+        this.createTime=LocalDateTime.now();
+        this.updateTime=LocalDateTime.now();
+    }
 }

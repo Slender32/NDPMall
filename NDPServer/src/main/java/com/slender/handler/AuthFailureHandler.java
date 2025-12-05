@@ -26,7 +26,7 @@ public class AuthFailureHandler implements AuthenticationFailureHandler {
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) {
-        final Response<Void> responseData= switch (exception){
+        final Response<Void> responseData = switch (exception){
             case TokenNotFoundException _ -> Response.fail(HttpStatus.UNAUTHORIZED.value(), ExceptionMessage.TOKEN_NOT_FOUND);
             case TokenSignatureException _ -> Response.fail(HttpStatus.BAD_REQUEST.value(), ExceptionMessage.TOKEN_SIGNATURE_ERROR);
             case TokenExpiredException _ -> Response.fail(HttpStatus.UNAUTHORIZED.value(), ExceptionMessage.TOKEN_EXPIRE_ERROR);

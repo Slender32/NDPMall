@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -44,7 +45,7 @@ public class Product implements Serializable {
 
     @Schema(description = "产品名", requiredMode = Schema.RequiredMode.REQUIRED, example = "无线蓝牙耳机")
     @NotBlank(message = "产品名不能为空")
-    @Size(min = 1, max = 20, message = "产品名长度必须在1到20个字符之间")
+    @Length(min = 1, max = 20, message = "产品名长度必须在1到20个字符之间")
     private String productName;
 
     @Schema(description = "库存", minimum = "0", example = "100")

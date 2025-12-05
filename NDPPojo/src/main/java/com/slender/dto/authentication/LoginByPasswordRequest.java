@@ -6,7 +6,7 @@ import com.slender.enumeration.authentication.LoginType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import org.hibernate.validator.constraints.Length;
 import lombok.Data;
 
 @Data
@@ -21,7 +21,7 @@ public class LoginByPasswordRequest{
     private LoginType type;
 
     @Schema(description = "用户名", example = "slender")
-    @Size(min = 2, max = 20, message = "用户名长度必须在2到20个字符之间")
+    @Length(min = 2, max = 20, message = "用户名长度必须在2到20个字符之间")
     private String userName;
 
     @Email
