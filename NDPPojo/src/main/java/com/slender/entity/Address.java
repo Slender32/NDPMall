@@ -2,16 +2,19 @@ package com.slender.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.slender.constant.other.EntityConstant;
+import com.slender.dto.user.AddressAddRequest;
 import com.slender.enumeration.DeleteStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDateTime;
 
 @Data
 @Schema(description = "收货地址信息")
+@NoArgsConstructor
 public class Address {
 
     @Schema(description = "收货地址ID", example = "1001")
@@ -49,4 +52,13 @@ public class Address {
             allowableValues = {EntityConstant.Delete.DELETED, EntityConstant.Delete.NORMAL},
             accessMode = Schema.AccessMode.READ_ONLY)
     private DeleteStatus deleted;
+
+    public Address(Long uid, AddressAddRequest request) {
+        this.uid=uid;
+        this.province= request.getProvince();
+        this.city= request.getCity();
+        this.detail= request.getDetail();
+        this.createTime=LocalDateTime.now();
+        this.updateTime=LocalDateTime.now();
+    }
 }

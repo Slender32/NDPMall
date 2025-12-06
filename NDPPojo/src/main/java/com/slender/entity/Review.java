@@ -2,7 +2,7 @@ package com.slender.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.slender.constant.other.EntityConstant;
-import com.slender.dto.product.ProductCommentRequest;
+import com.slender.dto.product.ReviewAddRequest;
 import com.slender.enumeration.DeleteStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
@@ -56,7 +56,7 @@ public class Review {
             accessMode = Schema.AccessMode.READ_ONLY)
     private DeleteStatus deleted;
 
-    public Review(Long pid, Long uid, ProductCommentRequest request) {
+    public Review(Long pid, Long uid, ReviewAddRequest request) {
         this.pid = pid;
         this.uid = uid;
         this.oid = request.getOid();

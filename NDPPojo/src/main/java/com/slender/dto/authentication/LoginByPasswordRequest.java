@@ -12,7 +12,7 @@ import lombok.Data;
 @Data
 @Schema(description = "登录信息")
 public class LoginByPasswordRequest{
-    @Schema(description = "密码（BCrypt加密后存储）", requiredMode = Schema.RequiredMode.REQUIRED, example = "e10adc3949ba59abbe56e057f20f883e")
+    @Schema(description = "密码", requiredMode = Schema.RequiredMode.REQUIRED, example = "123456xyz")
     @NotBlank(message = "密码不能为空")
     private String password;
 

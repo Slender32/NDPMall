@@ -1,7 +1,24 @@
 package com.slender.handler;
 
+import com.slender.exception.authentication.captcha.CaptchaMisMatchException;
+import com.slender.exception.authentication.captcha.CaptchaNotFoundException;
+import com.slender.exception.authentication.captcha.CaptchaPersistenceException;
+import com.slender.exception.authentication.login.LocalCacheNotFoundException;
+import com.slender.exception.authentication.login.LoginExpiredException;
+import com.slender.exception.authentication.login.LoginStatusException;
+import com.slender.exception.category.*;
+import com.slender.exception.order.OrderNotFoundException;
+import com.slender.exception.order.OrderNotPaidSuccessException;
+import com.slender.exception.product.ProductNotFoundException;
+import com.slender.exception.request.FrequentRequestCaptchaException;
+import com.slender.exception.user.AddressNotFoundException;
+import com.slender.exception.user.IllegalOperationException;
+import com.slender.exception.user.MerchantNotFoundException;
+import com.slender.exception.user.UserNotFoundException;
+import com.slender.message.ExceptionMessage;
 import com.slender.result.Response;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -11,14 +28,69 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class MvcExceptionHandler {
     @ExceptionHandler
     public Response<Void> handleException(Exception e){
-        log.error("捕获异常",e);
+        log.error("内部异常",e);
         return Response.fail(e.getMessage());
     }
 
     @ExceptionHandler
     public Response<Void> validation(MethodArgumentNotValidException e){
-        String message = e.getBindingResult().getAllErrors().getLast().getDefaultMessage();
-        return Response.fail(message);
+        return Response.fail(e.getBindingResult().getAllErrors().getFirst().getDefaultMessage());
+    }
+
+    @ExceptionHandler
+    public Response<Void> request(RequestException ex){
+        return switch (ex){
+            case FrequentRequestCaptchaException e -> Response.fail(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            default -> handleException(ex);
+        };
+    }
+
+    @ExceptionHandler
+    public Response<Void> captcha(CaptchaException ex){
+        return switch (ex){
+            case CaptchaNotFoundException _ -> Response.fail(HttpStatus.BAD_REQUEST.value(), ExceptionMessage.CAPTCHA_NOT_FOUND);
+            case CaptchaMisMatchException _ -> Response.fail(HttpStatus.UNAUTHORIZED.value(), ExceptionMessage.CAPTCHA_ERROR);
+            case CaptchaPersistenceException _ -> Response.fail(HttpStatus.INTERNAL_SERVER_ERROR.value(), ExceptionMessage.CAPTCHA_PERSISTENCE_ERROR);
+            default -> handleException(ex);
+        };
+    }
+
+    @ExceptionHandler
+    public Response<Void> login(LoginException ex){
+        return switch (ex){
+            case LocalCacheNotFoundException _ -> Response.fail(HttpStatus.BAD_REQUEST.value(), ExceptionMessage.LOCAL_CACHE_ERROR);
+            case LoginExpiredException _ -> Response.fail(HttpStatus.BAD_REQUEST.value(), ExceptionMessage.LOGIN_EXPIRED_ERROR);
+            case LoginStatusException _ -> Response.fail(HttpStatus.BAD_REQUEST.value(), ExceptionMessage.LOGIN_STATUS_ERROR);
+            default -> handleException(ex);
+        };
+    }
+
+    @ExceptionHandler
+    public Response<Void> user(UserException ex){
+        return switch (ex){
+            case UserNotFoundException _ -> Response.fail(HttpStatus.NOT_FOUND.value(), ExceptionMessage.USER_NOT_FOUND);
+            case AddressNotFoundException _ -> Response.fail(HttpStatus.NOT_FOUND.value(), ExceptionMessage.ADDRESS_NOT_FOUND);
+            case MerchantNotFoundException _ -> Response.fail(HttpStatus.NOT_FOUND.value(), ExceptionMessage.MERCHANT_NOT_FOUND);
+            case IllegalOperationException _ -> Response.fail(HttpStatus.BAD_REQUEST.value(), ExceptionMessage.ILLEGAL_OPERATION);
+            default -> handleException(ex);
+        };
+    }
+
+    @ExceptionHandler
+    public Response<Void> product(ProductException ex){
+        return switch (ex){
+            case ProductNotFoundException _ -> Response.fail(HttpStatus.NOT_FOUND.value(), ExceptionMessage.PRODUCT_NOT_FOUND);
+            default -> handleException(ex);
+        };
+    }
+
+    @ExceptionHandler
+    public Response<Void> order(OrderException ex){
+        return switch (ex){
+            case OrderNotFoundException _ -> Response.fail(HttpStatus.NOT_FOUND.value(), ExceptionMessage.ORDER_NOT_FOUND);
+            case OrderNotPaidSuccessException _ -> Response.fail(HttpStatus.BAD_REQUEST.value(), ExceptionMessage.ORDER_NOT_PAID_SUCCESS);
+            default -> handleException(ex);
+        };
     }
 
 }

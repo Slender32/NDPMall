@@ -13,10 +13,20 @@ public interface ExceptionMessage {
     String AUTHORITY_ERROR = "权限不足";
     String UNKNOWN_ERROR = "未知错误";
     String HAS_LOGIN_ERROR = "你已登录";
-    String CAPTCHA_NOT_FOUND = "验证码未找到";
+    String CAPTCHA_NOT_FOUND = "验证码不存在";
     String CAPTCHA_ERROR = "验证码错误";
     String EMAIL_ERROR = "邮箱错误";
     String REQUEST_READ_ERROR = "HttpServletRequest读取失败";
+    String LOCAL_CACHE_ERROR = "本地缓存错误";
+    String LOGIN_STATUS_ERROR = "登陆状态错误";
+    String USER_NOT_FOUND = "用户不存在";
+    String CAPTCHA_PERSISTENCE_ERROR = "验证码储存错误";
+    String ILLEGAL_OPERATION = "非法操作";
+    String ADDRESS_NOT_FOUND = "地址不存在";
+    String MERCHANT_NOT_FOUND = "商家不存在";
+    String PRODUCT_NOT_FOUND = "产品不存在";
+    String ORDER_NOT_FOUND = "订单不存在";
+    String ORDER_NOT_PAID_SUCCESS = "订单未支付成功";
 
     static String getLoginMessage(String column) {
         return (switch (column) {

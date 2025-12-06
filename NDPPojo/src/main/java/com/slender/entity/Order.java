@@ -2,17 +2,20 @@ package com.slender.entity;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.slender.constant.order.OrderConstant;
 import com.slender.constant.other.EntityConstant;
+import com.slender.dto.order.OrderCreateRequest;
 import com.slender.enumeration.DeleteStatus;
 import com.slender.enumeration.order.OrderStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
 @Schema(description = "订单信息")
+@NoArgsConstructor
 public class Order {
 
     @Schema(description = "订单ID（数据库主键）", example = "1001", accessMode = Schema.AccessMode.READ_ONLY)
@@ -58,4 +61,14 @@ public class Order {
             allowableValues = {EntityConstant.Delete.DELETED, EntityConstant.Delete.NORMAL},
             accessMode = Schema.AccessMode.READ_ONLY)
     private DeleteStatus deleted;
+
+    public Order(Long uid, OrderCreateRequest request) {
+        this.uid=uid;
+        this.pid=request.getPid();
+        this.aid=request.getAid();
+        this.quantity=request.getQuantity();
+        this.totalAmount=request.getTotalAmount();
+        this.status=OrderStatus.UNPAID;
+        this.createTime=LocalDateTime.now();
+    }
 }

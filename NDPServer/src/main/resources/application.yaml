@@ -8,13 +8,15 @@ spring:
     password: 123456xyz
   data:
     redis:
-      port: 32786
+      port: 32772
       password: admin
       database: 0
       lettuce:
         pool:
           max-wait: 1000
   mail:
+    username: 2037779479@qq.com
+    password: wfmuoxwqaynscdfa
     port: 465
     host: smtp.qq.com
     default-encoding: UTF-8
@@ -24,11 +26,10 @@ spring:
           ssl:
             enable: true
   rabbitmq:
-    port: 32784
+    port: 32773
     virtual-host: /
     username: admin
     password: admin
-
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
@@ -49,3 +50,5 @@ springdoc:
     enabled: true
   packages-to-scan: com.slender.controller
   paths-to-match: /**
+easy-es:
+  address: 127.0.0.1:32768

@@ -68,11 +68,11 @@ public class UserController {
     }
 
 
-    @DeleteMapping("/{uid}/logoff")
+    @DeleteMapping("/{uid}")
     @Operation(summary = "注销")
     public Response<Void> logoff(@AuthenticationPrincipal Long uid,
                                  @PathVariable("uid") Long requestUid,
-                                 @RequestParam @Validated LogoffRequest request){
+                                 @Validated LogoffRequest request){
         userService.logoff(uid,request);
         return Response.success("注销成功");
     }

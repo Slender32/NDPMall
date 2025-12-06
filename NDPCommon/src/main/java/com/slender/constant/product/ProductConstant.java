@@ -5,4 +5,5 @@ public interface ProductConstant {
         String LIST="LIST";
         String DELIST ="DELIST";
     }
+    Long DEFAULT_CATEGORY=1L;
 }

@@ -16,12 +16,27 @@ public class RabbitMQConfiguration {
     }
 
     @Bean
+    public DirectExchange orderExchange() {
+        return new DirectExchange("order");
+    }
+
+    @Bean
     public Queue captchaQueue() {
         return new Queue("captcha");
     }
 
     @Bean
+    public Queue orderQueue() {
+        return new Queue("order");
+    }
+
+    @Bean
     public Binding captchaBinding() {
         return BindingBuilder.bind(captchaQueue()).to(emailExchange()).with("captcha");
+    }
+
+    @Bean
+    public Binding orderbinding() {
+        return BindingBuilder.bind(orderQueue()).to(orderExchange()).with("order");
     }
 }

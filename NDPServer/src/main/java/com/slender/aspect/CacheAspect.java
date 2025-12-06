@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -26,6 +27,10 @@ public class CacheAspect {
     private final StringRedisTemplate redisTemplate;
     private final JsonParserManager jsonParser;
 
+    /**
+     * 该切面方法第一个参数为ID,返回值为实体类(Entity下的类),
+     * 用于将返回值缓存
+     */
     @Around("@annotation(annotation)")
     public Object cacheAround(ProceedingJoinPoint joinPoint,@Nullable ServiceCache annotation) throws Throwable {
         Long id = (Long) joinPoint.getArgs()[0];
@@ -33,7 +38,6 @@ public class CacheAspect {
         String key = CacheToolkit.getKey(type, id);
 
         String cached = redisTemplate.opsForValue().get(key);
-        log.info("获取缓存:{}",key);
         if (!StringToolkit.isBlank(cached)) return jsonParser.parse(cached,type);
 
         Object result = joinPoint.proceed();
@@ -45,13 +49,15 @@ public class CacheAspect {
         return result;
     }
 
-    @Before("@annotation(annotation)")
+    /**
+     * 该切面方法第一个参数为ID,只能用于ServiceImpl类,用来将缓存删除
+     */
+    @AfterReturning("@annotation(annotation)")
     public void before(JoinPoint joinPoint, @Nullable RemoveCache annotation){
         Long id = (Long) joinPoint.getArgs()[0];
         Class<?> clazz = joinPoint.getTarget().getClass();
         String key = CacheToolkit.getRemoveKey(clazz,id);
         redisTemplate.delete(key);
-        log.info("删除缓存:{}",key);
     }
 
 }

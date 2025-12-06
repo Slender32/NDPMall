@@ -3,7 +3,7 @@ package com.slender.entity;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.slender.constant.other.EntityConstant;
 import com.slender.constant.product.ProductConstant;
-import com.slender.dto.product.ProductListRequest;
+import com.slender.dto.product.ProductAddRequest;
 import com.slender.enumeration.DeleteStatus;
 import com.slender.enumeration.product.ProductStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -72,11 +72,11 @@ public class Product implements Serializable {
     @Schema(description = "删除标记：0-未删除 1-已删除",
             allowableValues = {EntityConstant.Delete.DELETED, EntityConstant.Delete.NORMAL},
             accessMode = Schema.AccessMode.READ_ONLY)
-    @NotNull
+    @NotNull(message = "删除标记不能为空")
     private DeleteStatus deleted;
 
-    public Product(Long uid, ProductListRequest request) {
-        this.mid = uid;
+    public Product(Long mid, ProductAddRequest request) {
+        this.mid = mid;
         this.cid = request.getCid();
         this.productName = request.getProductName();
         this.remain = request.getRemain();
@@ -84,5 +84,4 @@ public class Product implements Serializable {
         this.description = request.getDescription();
         this.updateTime = LocalDateTime.now();
     }
-
 }

@@ -11,6 +11,7 @@ import com.slender.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -61,5 +62,9 @@ public class UserRepository {
                 .set(updateRequest.getGender()!=null,UserColumn.GENDER, updateRequest.getGender())
                 .set(updateRequest.getBirthday()!=null,UserColumn.BIRTHDAY, updateRequest.getBirthday())
         );
+    }
+
+    public void updateBalance(Long uid, BigDecimal price) {
+        userMapper.updateBalance(new QueryWrapper<User>().eq(UserColumn.UID, uid),price);
     }
 }

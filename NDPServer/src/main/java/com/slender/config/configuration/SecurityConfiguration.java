@@ -76,7 +76,6 @@ public class SecurityConfiguration {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/merchants/**").hasAnyAuthority(UserConstant.Authority.MERCHANT, UserConstant.Authority.ADMINISTRATION)
                         .requestMatchers("/admins/**").hasAuthority(UserConstant.Authority.ADMINISTRATION)
                         .anyRequest().authenticated()
                 )

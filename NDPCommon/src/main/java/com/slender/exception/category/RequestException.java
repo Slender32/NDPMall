@@ -6,4 +6,7 @@ public class RequestException extends AuthenticationException {
     public RequestException() {
         super(null);
     }
+    public RequestException(String message) {
+        super(message);
+    }
 }
