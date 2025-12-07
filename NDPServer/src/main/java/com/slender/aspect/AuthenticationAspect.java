@@ -2,8 +2,6 @@ package com.slender.aspect;
 
 import com.slender.annotation.CheckAuthentication;
 import com.slender.exception.user.IllegalOperationException;
-import com.slender.exception.user.MerchantNotFoundException;
-import com.slender.repository.MerchantRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
@@ -18,7 +16,6 @@ import java.util.Objects;
 @Component
 @RequiredArgsConstructor
 public class AuthenticationAspect {
-    private final MerchantRepository merchantRepository;
 
     /**
      * 该切面方法第一个和第二个参数为ID,用于校验登录ID和操作ID是否一致

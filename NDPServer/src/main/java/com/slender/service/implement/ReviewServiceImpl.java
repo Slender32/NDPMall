@@ -10,7 +10,6 @@ import com.slender.enumeration.order.OrderStatus;
 import com.slender.exception.order.OrderNotFoundException;
 import com.slender.exception.order.OrderNotPaidSuccessException;
 import com.slender.exception.product.ProductNotFoundException;
-import com.slender.exception.user.MerchantNotFoundException;
 import com.slender.mapper.ReviewMapper;
 import com.slender.repository.OrderRepository;
 import com.slender.repository.ProductRepository;
