@@ -72,6 +72,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         userValidatorManager.validateCaptcha(registerRequest.getEmail(), registerRequest.getCaptcha());
         registerRequest.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
         this.save(new User(registerRequest));
+        userValidatorManager.removeCaptcha(registerRequest.getCaptcha());
     }
 
     @Override
@@ -79,6 +80,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         userValidatorManager.validateCaptcha(uid, resetRequest.getCaptcha(), CaptchaType.RESET);
         if(resetRequest.getType() == ResetType.PASSWORD) resetRequest.setPassword(passwordEncoder.encode(resetRequest.getPassword()));
         userRepository.update(resetRequest, uid);
+        userValidatorManager.removeCaptcha(resetRequest.getCaptcha());
     }
 
     @Override
@@ -107,5 +109,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public void logoff(Long uid, LogoffRequest request) {
         userValidatorManager.validateCaptcha(uid, request.getCaptcha(), CaptchaType.LOGOFF);
         this.removeById(uid);
+        userValidatorManager.removeCaptcha(request.getCaptcha());
     }
 }

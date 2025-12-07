@@ -18,9 +18,11 @@ import com.slender.exception.user.UserNotFoundException;
 import com.slender.message.ExceptionMessage;
 import com.slender.result.Response;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @Slf4j
@@ -90,6 +92,31 @@ public class MvcExceptionHandler {
             case OrderNotFoundException _ -> Response.fail(HttpStatus.NOT_FOUND.value(), ExceptionMessage.ORDER_NOT_FOUND);
             case OrderNotPaidSuccessException _ -> Response.fail(HttpStatus.BAD_REQUEST.value(), ExceptionMessage.ORDER_NOT_PAID_SUCCESS);
             default -> handleException(ex);
+        };
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Response<Void> duplicateKey(DuplicateKeyException e){
+        String[] split = e.getCause().getMessage().split(" ");
+        String[] key = split[split.length - 1].replace("'", "").split("\\.");
+        String value = split[2].replace("'", "");
+        String keyFirst=key[0];
+        String keySecond=key[1];
+        return switch (keyFirst){
+            case "user" ->
+                switch (keySecond) {
+                    case "user_user_name" -> Response.fail(HttpStatus.BAD_REQUEST.value(), "用户名"+value+"已存在");
+                    case "user_phone_number" -> Response.fail(HttpStatus.BAD_REQUEST.value(),"手机号"+value+"已存在");
+                    case "user_email" -> Response.fail(HttpStatus.BAD_REQUEST.value(),"邮箱"+value+"已存在");
+                    default -> handleException(e);
+                };
+            case "review" ->
+                switch (keySecond){
+                    case "review_oid" -> Response.fail(HttpStatus.BAD_REQUEST.value(),"该订单已评价");
+                    default -> handleException(e);
+                };
+            default -> handleException(e);
         };
     }
 

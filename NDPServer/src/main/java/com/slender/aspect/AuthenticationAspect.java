@@ -30,9 +30,4 @@ public class AuthenticationAspect {
             throw new IllegalOperationException();
     }
 
-    @Before("execution(* com.slender.controller.MerchantController.*(..))")
-    public void authenticate(JoinPoint joinPoint){
-        Long uid =(Long) joinPoint.getArgs()[0];
-        merchantRepository.getByUid(uid).orElseThrow(MerchantNotFoundException::new);
-    }
 }

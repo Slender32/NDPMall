@@ -83,5 +83,6 @@ public class Product implements Serializable {
         this.price = request.getPrice();
         this.description = request.getDescription();
         this.updateTime = LocalDateTime.now();
+        this.createTime = LocalDateTime.now();
     }
 }

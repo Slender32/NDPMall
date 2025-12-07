@@ -6,9 +6,6 @@ import com.slender.service.interfase.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Recover;
-import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -19,15 +16,12 @@ public class OrderListener {
     private final JsonParserManager jsonParser;
 
     @RabbitListener(queues = "order")
-    @Retryable(retryFor = RuntimeException.class, backoff = @Backoff(delay = 1000))
     public void updateStatus(String message) {
-        OrderMessage orderMessage = jsonParser.parse(message, OrderMessage.class);
-        orderService.updateStatus(orderMessage.bid(), orderMessage.status());
+        try {
+            OrderMessage orderMessage = jsonParser.parse(message, OrderMessage.class);
+            orderService.updateStatus(orderMessage.bid(), orderMessage.status());
+        } catch (Exception e) {
+            log.error("消息处理失败: {}", message, e);
+        }
     }
-
-    @Recover
-    public void recover(Exception ex, String message) {
-        log.error("消息处理失败: {}", message, ex);
-    }
-
 }

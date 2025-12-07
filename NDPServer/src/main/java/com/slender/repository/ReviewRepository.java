@@ -6,7 +6,6 @@ import com.slender.constant.review.ReviewColumn;
 import com.slender.dto.product.ReviewUpdateRequest;
 import com.slender.entity.Review;
 import com.slender.mapper.ReviewMapper;
-import com.slender.vo.ListData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

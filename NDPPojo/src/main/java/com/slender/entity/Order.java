@@ -1,5 +1,6 @@
 package com.slender.entity;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.slender.constant.order.OrderConstant;
 import com.slender.constant.other.EntityConstant;
 import com.slender.dto.order.OrderCreateRequest;
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 @Data
 @Schema(description = "订单信息")
 @NoArgsConstructor
+@TableName("`order`")
 public class Order {
 
     @Schema(description = "订单ID（数据库主键）", example = "1001", accessMode = Schema.AccessMode.READ_ONLY)

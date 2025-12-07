@@ -1,6 +1,7 @@
 package com.slender.handler;
 
 import com.slender.config.manager.ResponseWriterManager;
+import com.slender.exception.authentication.login.*;
 import com.slender.message.ExceptionMessage;
 import com.slender.result.Response;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,7 +19,7 @@ public class SecurityExceptionHandler implements AuthenticationEntryPoint {
     private final ResponseWriterManager responseWriterManager;
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception){
-        responseWriterManager.write(Response.fail(ExceptionMessage.UNKNOWN_ERROR),response);
+        responseWriterManager.write(Response.fail(ExceptionMessage.UNKNOWN_ERROR), response);
     }
 }
 

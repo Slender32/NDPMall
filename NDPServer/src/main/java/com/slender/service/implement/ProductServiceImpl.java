@@ -39,7 +39,7 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
     public void add(Long uid, ProductAddRequest request) {
         merchantRepository.getByUid(uid)
                 .ifPresentOrElse(merchant -> this.save(new Product(merchant.getMid(), request)),
-                        MerchantNotFoundException::new);
+                        () -> {throw new MerchantNotFoundException();});
     }
 
     @Override

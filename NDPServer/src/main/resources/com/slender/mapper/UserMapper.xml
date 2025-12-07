@@ -4,6 +4,6 @@
 
 <mapper namespace="com.slender.mapper.UserMapper">
     <update id="updateBalance">
-        update user set balance = balance + #{price} ${ew.customSqlSegment}
+        update user set balance = balance - #{price} ${ew.customSqlSegment}
     </update>
 </mapper>

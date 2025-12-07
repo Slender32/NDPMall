@@ -31,6 +31,7 @@ public class OrderRepository {
     }
 
     public void update(Long bid, OrderUpdateRequest request) {
+        if(request.getAid() == null && request.getQuantity() == null && request.getTotalAmount() == null) return;
         orderMapper.update(
                 new UpdateWrapper<Order>()
                         .eq(OrderColumn.BID, bid)

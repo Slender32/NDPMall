@@ -5,6 +5,6 @@
 <mapper namespace="com.slender.mapper.ProductMapper">
 
     <update id="updateRemain">
-        update product set remain = remain + #{quantity} ${ew.customSqlSegment}
+        update product set remain = remain - #{quantity} ${ew.customSqlSegment}
     </update>
 </mapper>
