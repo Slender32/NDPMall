@@ -15,8 +15,6 @@ spring:
         pool:
           max-wait: 1000
   mail:
-    username: 2037779479@qq.com
-    password: wfmuoxwqaynscdfa
     port: 465
     host: smtp.qq.com
     default-encoding: UTF-8
@@ -50,5 +48,3 @@ springdoc:
     enabled: true
   packages-to-scan: com.slender.controller
   paths-to-match: /**
-easy-es:
-  address: 127.0.0.1:32768
