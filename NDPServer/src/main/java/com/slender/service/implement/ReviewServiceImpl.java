@@ -34,11 +34,15 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review> impleme
              .ifPresentOrElse(_ ->
                  orderRepository.get(request.getOid())
                      .ifPresentOrElse(order -> {
-                          if(order.getStatus() == OrderStatus.PAID_SUCCESS)
-                              this.save(new Review(pid, uid, request));
-                          else throw new OrderNotPaidSuccessException();},
-                             () -> {throw new OrderNotFoundException();}),
-                     () -> {throw new ProductNotFoundException();});
+                         if(order.getStatus() == OrderStatus.PAID_SUCCESS)
+                             this.save(new Review(pid, uid, request));
+                         else
+                             throw new OrderNotPaidSuccessException();
+                         },
+                         () -> {throw new OrderNotFoundException();}
+                     ),
+                 () -> {throw new ProductNotFoundException();}
+             );
     }
 
     @Override

@@ -1,37 +1,56 @@
-package com.slender.handler;
+package com.slender.handler
 
-import com.slender.config.manager.ResponseWriterManager;
-import com.slender.exception.authentication.captcha.CaptchaMisMatchException;
-import com.slender.exception.authentication.captcha.CaptchaNotFoundException;
-import com.slender.exception.authentication.login.*;
-import com.slender.exception.category.ValidationException;
-import com.slender.message.ExceptionMessage;
-import com.slender.result.Response;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.stereotype.Component;
+import com.slender.config.manager.ResponseWriterManager
+import com.slender.exception.authentication.captcha.CaptchaMisMatchException
+import com.slender.exception.authentication.captcha.CaptchaNotFoundException
+import com.slender.exception.authentication.login.EmailNotFoundException
+import com.slender.exception.authentication.login.LoginPersistenceException
+import com.slender.exception.category.ValidationException
+import com.slender.message.ExceptionMessage
+import com.slender.result.Response
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
+import org.springframework.http.HttpStatus
+import org.springframework.security.core.AuthenticationException
+import org.springframework.security.web.authentication.AuthenticationFailureHandler
+import org.springframework.stereotype.Component
 
-@Slf4j
 @Component
-@RequiredArgsConstructor
-public class AuthFailureHandler implements AuthenticationFailureHandler {
-    private final ResponseWriterManager responseWriterManager;
+class AuthFailureHandler(
+        private val responseWriterManager: ResponseWriterManager
+) : AuthenticationFailureHandler {
+    override fun onAuthenticationFailure(
+            request: HttpServletRequest,
+            response: HttpServletResponse,
+            exception: AuthenticationException
+    ) {
+        val responseData = exception.toErrorResponse()
+        responseWriterManager.write(responseData, response)
+    }
 
-    @Override
-    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) {
-        final Response<Void> responseData = switch (exception){
-            case ValidationException e -> Response.fail(HttpStatus.BAD_REQUEST.value(), e.getMessage());
-            case LoginPersistenceException _ -> Response.fail(HttpStatus.INTERNAL_SERVER_ERROR.value(), ExceptionMessage.HAS_LOGIN_ERROR);
-            case CaptchaNotFoundException _ -> Response.fail(HttpStatus.BAD_REQUEST.value(), ExceptionMessage.CAPTCHA_NOT_FOUND);
-            case CaptchaMisMatchException _ -> Response.fail(HttpStatus.BAD_REQUEST.value(), ExceptionMessage.CAPTCHA_ERROR);
-            case EmailNotFoundException _ -> Response.fail(HttpStatus.BAD_REQUEST.value(), ExceptionMessage.EMAIL_ERROR);
-            default -> Response.fail(ExceptionMessage.INTERNAL_ERROR);
-        };
-        responseWriterManager.write(responseData, response);
+    private fun AuthenticationException.toErrorResponse(): Response<Void> {
+        return when (this) {
+            is ValidationException -> Response.fail(
+                    HttpStatus.BAD_REQUEST.value(),
+                    message ?: "验证失败"
+            )
+            is LoginPersistenceException -> Response.fail(
+                    HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    ExceptionMessage.HAS_LOGIN_ERROR
+            )
+            is CaptchaNotFoundException -> Response.fail(
+                    HttpStatus.BAD_REQUEST.value(),
+                    ExceptionMessage.CAPTCHA_NOT_FOUND
+            )
+            is CaptchaMisMatchException -> Response.fail(
+                    HttpStatus.BAD_REQUEST.value(),
+                    ExceptionMessage.CAPTCHA_ERROR
+            )
+            is EmailNotFoundException -> Response.fail(
+                    HttpStatus.BAD_REQUEST.value(),
+                    ExceptionMessage.EMAIL_ERROR
+            )
+            else -> Response.fail(ExceptionMessage.INTERNAL_ERROR)
+        }
     }
 }
