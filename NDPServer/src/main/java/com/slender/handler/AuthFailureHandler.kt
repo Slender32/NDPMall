@@ -20,7 +20,7 @@ class AuthFailureHandler(
         private val responseWriterManager: ResponseWriterManager
 ) : AuthenticationFailureHandler {
     override fun onAuthenticationFailure(
-            request: HttpServletRequest,
+            request: HttpServletRequest?,
             response: HttpServletResponse,
             exception: AuthenticationException
     ) {

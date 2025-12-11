@@ -18,6 +18,6 @@ class SignOutSuccessHandler(
         response: HttpServletResponse,
         authentication: Authentication?
     ){
-        responseWriterManager.write(Response.success<Void?>(UserMessage.LOGOUT_SUCCESS), response)
+        responseWriterManager.write(Response.success<Void>(UserMessage.LOGOUT_SUCCESS), response)
     }
 }

@@ -15,7 +15,7 @@ class SecurityExceptionHandler(
     private val responseWriterManager: ResponseWriterManager
 ) : AuthenticationEntryPoint {
     override fun commence(
-        request: HttpServletRequest,
+        request: HttpServletRequest?,
         response: HttpServletResponse,
         exception: AuthenticationException?
     ) {
