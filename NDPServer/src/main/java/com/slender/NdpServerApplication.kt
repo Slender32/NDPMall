@@ -1,11 +1,12 @@
 package com.slender;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.runApplication
 
 @SpringBootApplication
-public class NdpServerApplication {
-    void main(String[] args) {
-        SpringApplication.run(NdpServerApplication.class, args);
-    }
+open class NdpServerApplication
+
+fun main(args: Array<String>) {
+    runApplication<NdpServerApplication>(*args)
 }
+
