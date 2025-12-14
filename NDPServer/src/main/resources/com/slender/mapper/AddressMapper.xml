@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.slender.mapper.AddressMapper">
+    <select id="getDirtyData" resultType="java.lang.Long">
+        select aid
+        from address
+        left outer join user on user.uid=address.uid
+        where user.uid is null
+    </select>
+</mapper>
