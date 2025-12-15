@@ -32,18 +32,18 @@ class RequestTypeFilter(
             requestConfigManager
                 .findRequestConfig(request.requestURI)
                 .ifPresent(Consumer { requestConfig ->
-                    requestConfig.method.ifPresent(Consumer { method ->
+                    requestConfig.getMethod().ifPresent{ method ->
                         if (method.name() != request.method) throw RequestMethodException()
-                    })
-                    if (request.contentType == null && requestConfig.bodyType.isPresent) throw RequestContentException()
-                    requestConfig.bodyType.ifPresent(Consumer { mediaType ->
+                    }
+                    if (request.contentType == null && requestConfig.getBodyType().isPresent) throw RequestContentException()
+                    requestConfig.getBodyType().ifPresent{mediaType ->
                         if (mediaType !== MediaType.ALL) {
                             val requestType = MediaType.parseMediaType(request.contentType)
                             if (!mediaType.includes(requestType)) {
                                 throw RequestContentException()
                             }
                         }
-                    })
+                    }
                 })
         } catch (exception: RuntimeException) {
             val responseData = exception.toErrorResponse()

@@ -14,10 +14,10 @@ class OrderListener(
 ) {
     private val log = LoggerFactory.getLogger(OrderListener::class.java)
     @RabbitListener(queues = ["order"])
-    fun updateStatus(message: String?) {
+    fun updateStatus(message: String) {
         try {
             val orderMessage = jsonParser.parse(message, OrderMessage::class.java)
-            orderService.updateStatus(orderMessage.bid, orderMessage.status)
+            orderService.updateStatus(orderMessage.bid, orderMessage.uid,orderMessage.status)
         } catch (e: Exception) {
             log.error("消息处理失败: {}", message, e)
         }

@@ -15,7 +15,7 @@ class EmailListener(
     private val log = LoggerFactory.getLogger(EmailListener::class.java)
 
     @RabbitListener(queues = ["captcha"])
-    fun sendEmail(message: String?) {
+    fun sendEmail(message: String) {
         try {
             val emailMessage = jsonParser.parse(message, EmailMessage::class.java)
             emailService.sendCaptcha(emailMessage.type, emailMessage.toEmail)
