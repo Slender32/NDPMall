@@ -1,4 +1,4 @@
-package com.slender.config.configuration;
+package com.slender.config.configuration
 
 import com.slender.task.DatabaseCleanTask
 import org.quartz.*
@@ -8,12 +8,12 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 open class QuartzConfiguration {
     @Bean
-    open fun databaseCleanupJobDetail(): JobDetail {
-        return JobBuilder.newJob(DatabaseCleanTask::class.java)
+    open fun databaseCleanupJobDetail(): JobDetail
+        = JobBuilder.newJob(DatabaseCleanTask::class.java)
             .withIdentity("Clean")
             .storeDurably()
             .build()
-    }
+
 
     @Bean
     open fun databaseCleanupJobTrigger(): CronTrigger {

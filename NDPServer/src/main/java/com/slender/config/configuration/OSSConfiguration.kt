@@ -9,35 +9,36 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-open class OSSConfig {
+open class OSSConfiguration {
     companion object {
-        const val OSS_ENDPOINT = "oss-cn-guangzhou.aliyuncs.com"
-        const val OSS_REGION = "cn-guangzhou"
-        val OSS_ACCESS_KEY_ID: String? = System.getenv("OSS_ACCESS_KEY_ID")
-        val OSS_ACCESS_KEY_SECRET: String? = System.getenv("OSS_ACCESS_KEY_SECRET")
+        val ACCESS_KEY_ID: String? = System.getenv("OSS_ACCESS_KEY_ID")
+        val ACCESS_KEY_SECRET: String? = System.getenv("OSS_ACCESS_KEY_SECRET")
+        const val ENDPOINT = "oss-cn-guangzhou.aliyuncs.com"
+        const val REGION = "cn-guangzhou"
+        const val BUCKET_NAME = "ndp-mall"
     }
     @Bean
-    open fun provider(): DefaultCredentialProvider{
-        return DefaultCredentialProvider(OSS_ACCESS_KEY_ID, OSS_ACCESS_KEY_SECRET)
-    }
+    open fun provider(): DefaultCredentialProvider
+        = DefaultCredentialProvider(ACCESS_KEY_ID, ACCESS_KEY_SECRET)
+
 
     @Bean
-    open fun clientConfig(): ClientBuilderConfiguration {
-        return ClientBuilderConfiguration().apply {
+    open fun clientConfig(): ClientBuilderConfiguration
+        = ClientBuilderConfiguration().apply {
             setSignatureVersion(SignVersion.V4)
         }
-    }
+
 
     @Bean
     open fun ossClient(
         provider: DefaultCredentialProvider,
         config: ClientBuilderConfiguration
-    ): OSS {
-        return OSSClientBuilder.create()
+    ): OSS
+        = OSSClientBuilder.create()
             .credentialsProvider(provider)
             .clientConfiguration(config)
-            .region(OSS_REGION)
-            .endpoint(OSS_ENDPOINT)
+            .region(REGION)
+            .endpoint(ENDPOINT)
             .build()
-    }
+
 }

@@ -4,6 +4,7 @@ import com.slender.config.manager.ResponseWriterManager
 import com.slender.exception.authentication.captcha.CaptchaMisMatchException
 import com.slender.exception.authentication.captcha.CaptchaNotFoundException
 import com.slender.exception.authentication.login.EmailNotFoundException
+import com.slender.exception.authentication.login.LoginMisMatchException
 import com.slender.exception.authentication.login.LoginPersistenceException
 import com.slender.exception.category.ValidationException
 import com.slender.message.ExceptionMessage
@@ -30,27 +31,17 @@ class AuthFailureHandler(
 
     private fun AuthenticationException.toErrorResponse(): Response<Void> {
         return when (this) {
-            is ValidationException -> Response.fail(
-                    HttpStatus.BAD_REQUEST.value(),
-                    message ?: "验证失败"
-            )
-            is LoginPersistenceException -> Response.fail(
-                    HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                    ExceptionMessage.HAS_LOGIN_ERROR
-            )
-            is CaptchaNotFoundException -> Response.fail(
-                    HttpStatus.BAD_REQUEST.value(),
-                    ExceptionMessage.CAPTCHA_NOT_FOUND
-            )
-            is CaptchaMisMatchException -> Response.fail(
-                    HttpStatus.BAD_REQUEST.value(),
-                    ExceptionMessage.CAPTCHA_ERROR
-            )
-            is EmailNotFoundException -> Response.fail(
-                    HttpStatus.BAD_REQUEST.value(),
-                    ExceptionMessage.EMAIL_ERROR
-            )
-            else -> Response.fail(ExceptionMessage.INTERNAL_ERROR)
+            is ValidationException, is LoginMisMatchException ->
+                Response.fail(HttpStatus.BAD_REQUEST.value(), message ?: ExceptionMessage.LOGIN_ERROR)
+            is LoginPersistenceException ->
+                Response.fail(HttpStatus.INTERNAL_SERVER_ERROR.value(), ExceptionMessage.HAS_LOGIN_ERROR)
+            is CaptchaNotFoundException ->
+                Response.fail(HttpStatus.BAD_REQUEST.value(), ExceptionMessage.CAPTCHA_NOT_FOUND)
+            is CaptchaMisMatchException ->
+                Response.fail(HttpStatus.BAD_REQUEST.value(), ExceptionMessage.CAPTCHA_ERROR)
+            is EmailNotFoundException ->
+                Response.fail(HttpStatus.BAD_REQUEST.value(), ExceptionMessage.EMAIL_ERROR)
+            else -> Response.fail(ExceptionMessage.LOGIN_ERROR)
         }
     }
 }

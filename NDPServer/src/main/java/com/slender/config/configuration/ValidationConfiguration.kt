@@ -9,12 +9,9 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 open class ValidationConfiguration {
     @Bean
-    open fun validatorFactory(): ValidatorFactory {
-        return Validation.buildDefaultValidatorFactory()
-    }
+    open fun validatorFactory(): ValidatorFactory = Validation.buildDefaultValidatorFactory()
 
     @Bean
-    open fun validator(validatorFactory: ValidatorFactory): Validator {
-        return validatorFactory.validator
-    }
+    open fun validator(validatorFactory: ValidatorFactory): Validator = validatorFactory.validator
+
 }

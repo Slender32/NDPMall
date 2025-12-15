@@ -10,32 +10,22 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 open class RabbitMQConfiguration {
     @Bean
-    open fun emailExchange(): DirectExchange {
-        return DirectExchange("email")
-    }
+    open fun emailExchange(): DirectExchange = DirectExchange("email")
 
     @Bean
-    open fun orderExchange(): DirectExchange {
-        return DirectExchange("order")
-    }
+    open fun orderExchange(): DirectExchange = DirectExchange("order")
 
     @Bean
-    open fun captchaQueue(): Queue {
-        return Queue("captcha")
-    }
+    open fun captchaQueue(): Queue = Queue("captcha")
 
     @Bean
-    open fun orderQueue(): Queue {
-        return Queue("order")
-    }
+    open fun orderQueue(): Queue = Queue("order")
 
     @Bean
-    open fun captchaBinding(): Binding {
-        return BindingBuilder.bind(captchaQueue()).to(emailExchange()).with("captcha")
-    }
+    open fun captchaBinding(): Binding =
+        BindingBuilder.bind(captchaQueue()).to(emailExchange()).with("captcha")
 
     @Bean
-    open fun orderBinding(): Binding {
-        return BindingBuilder.bind(orderQueue()).to(orderExchange()).with("order")
-    }
+    open fun orderBinding(): Binding =
+        BindingBuilder.bind(orderQueue()).to(orderExchange()).with("order")
 }

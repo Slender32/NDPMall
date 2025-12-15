@@ -1,8 +1,10 @@
 package com.slender.config.configuration
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.slender.config.manager.AuthenticationTokenManager
 import com.slender.config.manager.FilterConfigManager
 import com.slender.config.manager.RequestConfigManager
+import com.slender.config.manager.ValidatorManager
 import com.slender.constant.user.UserConstant
 import com.slender.filter.CaptchaFilter
 import com.slender.filter.JwtFilter
@@ -39,26 +41,23 @@ open class SecurityConfiguration {
     }
 
     @Bean
-    open fun filterConfigManager(): FilterConfigManager {
-        return FilterConfigManager()
-            .addFilterConfig(MultiPasswordFilter::class.java, LOGIN_PASSWORD)
-            .addFilterConfig(CaptchaFilter::class.java, LOGIN_CAPTCHA)
-    }
+    open fun requestMatcher(): RequestConfigManager
+        = RequestConfigManager().apply {
+            addPOSTURIConfig(LOGIN_PASSWORD, false)
+            addPOSTURIConfig(CAPTCHA, false)
+            addPOSTURIConfig(LOGIN_CAPTCHA, false)
+            addPOSTURIConfig(REGISTER, false)
+            addGETURIConfig(REFRESH, true)
+            addGETURIConfig(API, false)
+            addDELETEURIConfig(LOGOUT, true)
+        }
 
     @Bean
-    open fun requestMatcher(): RequestConfigManager {
-        return RequestConfigManager()
-            .addPOSTURIConfig(LOGIN_PASSWORD, false)
-            .addPOSTURIConfig(CAPTCHA, false)
-            .addPOSTURIConfig(LOGIN_CAPTCHA, false)
-            .addPOSTURIConfig(REGISTER, false)
-
-            .addGETURIConfig(REFRESH, true)
-            .addGETURIConfig(API, false)
-
-            .addDELETEURIConfig(LOGOUT, true)
-            .addDELETEURIConfig(LOGOUT, true)
-    }
+    open fun filterConfigManager(): FilterConfigManager
+        = FilterConfigManager().apply {
+            addFilterConfig(MultiPasswordFilter::class.java, LOGIN_PASSWORD)
+            addFilterConfig(CaptchaFilter::class.java, LOGIN_CAPTCHA)
+        }
 
     @Bean
     open fun filterChain(
@@ -71,8 +70,8 @@ open class SecurityConfiguration {
         requestTypeFilter: RequestTypeFilter,
         jwtFilter: JwtFilter,
         captchaFilter: CaptchaFilter
-    ): SecurityFilterChain {
-        return http
+    ): SecurityFilterChain
+        = http
             .csrf(AbstractHttpConfigurer<*, *>::disable)
             .sessionManagement { session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -99,49 +98,52 @@ open class SecurityConfiguration {
                     .accessDeniedHandler(accessRefuseHandler)
             }
             .build()
-    }
+
 
     @Bean
     open fun passwordFilter(
         filterConfigManager: FilterConfigManager,
         authenticationManager: AuthenticationManager,
         authSuccessHandler: AuthSuccessHandler,
-        authFailureHandler: AuthFailureHandler
-    ): MultiPasswordFilter {
-        return MultiPasswordFilter(filterConfigManager).apply {
+        authFailureHandler: AuthFailureHandler,
+        objectMapper: ObjectMapper,
+        validatorManager: ValidatorManager
+    ): MultiPasswordFilter
+        = MultiPasswordFilter(filterConfigManager,objectMapper,validatorManager).apply {
             setAuthenticationManager(authenticationManager)
             setAuthenticationFailureHandler(authFailureHandler)
             setAuthenticationSuccessHandler(authSuccessHandler)
         }
-    }
+
 
     @Bean
     open fun captchaFilter(
         filterConfigManager: FilterConfigManager,
         authSuccessHandler: AuthSuccessHandler,
         authenticationManager: AuthenticationManager,
-        authFailureHandler: AuthFailureHandler
-    ): CaptchaFilter {
-        return CaptchaFilter(filterConfigManager).apply {
+        authFailureHandler: AuthFailureHandler,
+        objectMapper: ObjectMapper,
+        validatorManager: ValidatorManager
+    ): CaptchaFilter
+        = CaptchaFilter(filterConfigManager,objectMapper,validatorManager).apply {
             setAuthenticationManager(authenticationManager)
             setAuthenticationFailureHandler(authFailureHandler)
             setAuthenticationSuccessHandler(authSuccessHandler)
         }
-    }
+
 
     @Bean
-    open fun passwordEncoder(): PasswordEncoder {
-        return BCryptPasswordEncoder()
-    }
+    open fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
+
 
     @Bean
     open fun authenticationManager(
         captchaProvider: CaptchaProvider,
         passwordProvider: PasswordProvider
-    ): AuthenticationManager {
-        return AuthenticationTokenManager().apply {
+    ): AuthenticationManager
+        = AuthenticationTokenManager().apply {
             addProviders(captchaProvider)
             addProviders(passwordProvider)
         }
-    }
+
 }
