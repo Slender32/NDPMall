@@ -18,8 +18,9 @@ import java.util.*
 class FileManager(
     private val client: OSS
 ) {
-    fun upload(fileName: String, content: ByteArray, type: FileType): String {
+    fun upload(fileName: String?, content: ByteArray, type: FileType): String {
         try {
+            if(fileName==null) throw NullPointerException()
             val date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM"))
             val fileId = UUID.randomUUID().toString() + fileName.substring(fileName.lastIndexOf("."))
             val objectName = "$date/${type.name}/$fileId"

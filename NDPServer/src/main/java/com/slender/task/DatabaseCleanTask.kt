@@ -9,7 +9,5 @@ import org.springframework.stereotype.Component
 class DatabaseCleanTask(
     private val taskService: TaskService
 ) : Job {
-    override fun execute(jobExecutionContext: JobExecutionContext) {
-        taskService.cleanDataBase()
-    }
+    override fun execute(jobExecutionContext: JobExecutionContext) = taskService.cleanDataBase()
 }

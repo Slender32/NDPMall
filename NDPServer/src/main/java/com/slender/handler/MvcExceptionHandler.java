@@ -7,14 +7,16 @@ import com.slender.exception.authentication.login.LocalCacheNotFoundException;
 import com.slender.exception.authentication.login.LoginExpiredException;
 import com.slender.exception.authentication.login.LoginStatusException;
 import com.slender.exception.category.*;
+import com.slender.exception.file.ExcelExportException;
 import com.slender.exception.order.OrderNotFoundException;
 import com.slender.exception.order.OrderNotPaidSuccessException;
 import com.slender.exception.product.ProductNotFoundException;
+import com.slender.exception.file.FileNameErrorException;
+import com.slender.exception.file.FileNameNotFoundException;
+import com.slender.exception.product.ReviewNotFoundException;
 import com.slender.exception.request.FrequentRequestCaptchaException;
-import com.slender.exception.user.AddressNotFoundException;
-import com.slender.exception.user.IllegalOperationException;
-import com.slender.exception.user.MerchantNotFoundException;
-import com.slender.exception.user.UserNotFoundException;
+import com.slender.exception.file.OSSProcessingException;
+import com.slender.exception.user.*;
 import com.slender.message.ExceptionMessage;
 import com.slender.result.Response;
 import lombok.extern.slf4j.Slf4j;
@@ -48,6 +50,17 @@ public class MvcExceptionHandler {
     }
 
     @ExceptionHandler
+    public Response<Void> file(FileException ex){
+        return switch (ex){
+            case FileNameErrorException _ -> Response.fail(HttpStatus.BAD_REQUEST.value(), ExceptionMessage.FILE_NAME_ERROR);
+            case FileNameNotFoundException _ -> Response.fail(HttpStatus.BAD_REQUEST.value(), ExceptionMessage.FILE_NAME_NOT_FOUND);
+            case OSSProcessingException _ -> Response.fail(HttpStatus.INTERNAL_SERVER_ERROR.value(), ExceptionMessage.OSS_ERROR);
+            case ExcelExportException _ -> Response.fail(HttpStatus.INTERNAL_SERVER_ERROR.value(), ExceptionMessage.EXCEL_EXPORT_ERROR);
+            default -> handleException(ex);
+        };
+    }
+
+    @ExceptionHandler
     public Response<Void> captcha(CaptchaException ex){
         return switch (ex){
             case CaptchaNotFoundException _ -> Response.fail(HttpStatus.BAD_REQUEST.value(), ExceptionMessage.CAPTCHA_NOT_FOUND);
@@ -74,6 +87,8 @@ public class MvcExceptionHandler {
             case AddressNotFoundException _ -> Response.fail(HttpStatus.NOT_FOUND.value(), ExceptionMessage.ADDRESS_NOT_FOUND);
             case MerchantNotFoundException _ -> Response.fail(HttpStatus.NOT_FOUND.value(), ExceptionMessage.MERCHANT_NOT_FOUND);
             case IllegalOperationException _ -> Response.fail(HttpStatus.BAD_REQUEST.value(), ExceptionMessage.ILLEGAL_OPERATION);
+            case DuplicateFavouriteException _ -> Response.fail(HttpStatus.BAD_REQUEST.value(), ExceptionMessage.DUPLICATE_FAVOURITE);
+            case FavouriteNotFoundException _ -> Response.fail(HttpStatus.NOT_FOUND.value(), ExceptionMessage.FAVOURITE_NOT_FOUND);
             default -> handleException(ex);
         };
     }
@@ -81,6 +96,7 @@ public class MvcExceptionHandler {
     @ExceptionHandler
     public Response<Void> product(ProductException ex){
         return switch (ex){
+            case ReviewNotFoundException _ -> Response.fail(HttpStatus.NOT_FOUND.value(), ExceptionMessage.REVIEW_NOT_FOUND);
             case ProductNotFoundException _ -> Response.fail(HttpStatus.NOT_FOUND.value(), ExceptionMessage.PRODUCT_NOT_FOUND);
             default -> handleException(ex);
         };

@@ -33,7 +33,7 @@ open class AddressController(
     open fun getAddressList(
         @Parameter(hidden = true) @AuthenticationPrincipal uid: Long,
         @PathVariable("uid") requestUid: Long,
-        @RequestParam order: Boolean
+        @RequestParam order: Boolean?
     ): Response<ListData<Address>> = Response.success(addressService.getList(uid, order))
 
     @PostMapping

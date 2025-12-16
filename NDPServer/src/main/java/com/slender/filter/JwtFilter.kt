@@ -53,7 +53,7 @@ class JwtFilter(
                 try {
                     if (pathMatcher.match(SecurityConfiguration.REFRESH, request.requestURI)) {
                         val uid: String = JwtToolkit.parseToken(JwtConstant.REFRESH_KEY, header.substring(7))
-                            .getOrDefault(UserField.UID, StringToolkit.getBlankString()).toString()
+                            .getOrDefault(UserField.UID, StringToolkit.blankString).toString()
                         if (uid.isBlank()) throw TokenNotFoundException()
                         val block = redisTemplate.opsForValue().get(RedisKey.Authentication.USER_BLOCK_CACHE + uid)
                         if (block != null) throw BlockException()
@@ -62,7 +62,7 @@ class JwtFilter(
                         SecurityContextHolder.getContext().authentication = JwtAuthenticationToken(uid.toLong())
                     } else {
                         val uid: String = JwtToolkit.parseToken(JwtConstant.ACCESS_KEY, header.substring(7))
-                            .getOrDefault(UserField.UID, StringToolkit.getBlankString()).toString()
+                            .getOrDefault(UserField.UID, StringToolkit.blankString).toString()
                         if (uid.isBlank()) throw TokenNotFoundException()
                         val cacheData = redisTemplate.opsForValue().get(RedisKey.Authentication.USER_LOGIN_CACHE + uid) ?: throw LoginExpiredException()
                         val loginDataCache = jsonParser.parse(cacheData, LoginDataCache::class.java)

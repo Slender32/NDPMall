@@ -12,7 +12,7 @@ class OrderListener(
     private val orderService: OrderService,
     private val jsonParser: JsonParserManager
 ) {
-    private val log = LoggerFactory.getLogger(OrderListener::class.java)
+    private val log = LoggerFactory.getLogger(javaClass)
     @RabbitListener(queues = ["order"])
     fun updateStatus(message: String) {
         try {

@@ -21,7 +21,7 @@ open class CategoryController(
     @GetMapping
     @Operation(summary = "获取分类列表")
     open fun getCategoryList(
-        @RequestParam order: Boolean
+        @RequestParam order: Boolean?
     ): Response<ListData<Category>> = Response.success(categoryService.getList(order))
 
 

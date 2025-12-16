@@ -12,7 +12,7 @@ class EmailListener(
     private val emailService: EmailService,
     private val jsonParser: JsonParserManager
 ) {
-    private val log = LoggerFactory.getLogger(EmailListener::class.java)
+    private val log = LoggerFactory.getLogger(javaClass)
 
     @RabbitListener(queues = ["captcha"])
     fun sendEmail(message: String) {
