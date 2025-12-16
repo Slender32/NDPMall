@@ -3,7 +3,6 @@ package com.slender.validator
 import com.slender.annotation.Email
 import jakarta.validation.ConstraintValidator
 import jakarta.validation.ConstraintValidatorContext
-import java.util.regex.Pattern
 
 class EmailValidator : ConstraintValidator<Email, String> {
     override fun isValid(

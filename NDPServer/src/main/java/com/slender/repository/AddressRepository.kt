@@ -6,12 +6,8 @@ import com.slender.constant.address.AddressColumn
 import com.slender.dto.user.AddressUpdateRequest
 import com.slender.entity.Address
 import com.slender.mapper.AddressMapper
-import lombok.RequiredArgsConstructor
-import lombok.extern.apachecommons.CommonsLog
 import org.springframework.stereotype.Component
-import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
-import java.util.*
 
 @Component
 class AddressRepository(

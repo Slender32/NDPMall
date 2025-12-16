@@ -1,9 +1,8 @@
 package com.slender.validator
 
-import jakarta.validation.ConstraintValidator
 import com.slender.annotation.Phone
+import jakarta.validation.ConstraintValidator
 import jakarta.validation.ConstraintValidatorContext
-import java.util.regex.Pattern
 
 class PhoneValidator : ConstraintValidator<Phone, String> {
     override fun isValid(phone: String?, context: ConstraintValidatorContext?): Boolean {
