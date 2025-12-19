@@ -40,4 +40,8 @@ open class AdministrationController(
     open fun exportProducts(response: HttpServletResponse) {
         productService.export(response)
     }
+
+    @GetMapping("/test")
+    @Operation(summary = "测试")
+    open fun test(): Response<String> = Response.success("测试成功")
 }
