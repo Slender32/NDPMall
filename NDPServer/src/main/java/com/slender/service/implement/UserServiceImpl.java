@@ -1,6 +1,7 @@
 package com.slender.service.implement;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.slender.config.manager.FileManager;
 import com.slender.config.manager.JsonParserManager;
 import com.slender.config.manager.UserValidatorManager;
 import com.slender.constant.other.RabbitMQConstant;
@@ -12,6 +13,7 @@ import com.slender.dto.user.UserRegisterRequest;
 import com.slender.dto.user.UserResetRequest;
 import com.slender.dto.user.UserUpdateRequest;
 import com.slender.entity.User;
+import com.slender.enumeration.FileType;
 import com.slender.enumeration.authentication.CaptchaType;
 import com.slender.enumeration.authentication.ResetType;
 import com.slender.exception.authentication.login.LoginStatusException;
@@ -25,6 +27,7 @@ import com.slender.repository.UserRepository;
 import com.slender.service.interfase.UserService;
 import com.slender.utils.JwtToolkit;
 import com.slender.utils.StringToolkit;
+import com.slender.vo.FileData;
 import com.slender.vo.RefreshData;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +35,9 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Optional;
 
 @Slf4j
@@ -44,6 +49,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private final RabbitTemplate rabbitTemplate;
     private final JsonParserManager jsonParser;
     private final PasswordEncoder passwordEncoder;
+    private final FileManager fileManager;
     private final UserValidatorManager userValidatorManager;
 
     @Override
@@ -110,5 +116,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         userValidatorManager.validateCaptcha(uid, request.getCaptcha(), CaptchaType.LOGOFF);
         this.removeById(uid);
         userValidatorManager.removeCaptcha(request.getCaptcha());
+    }
+
+    @Override
+    public FileData uploadAvatar(MultipartFile file) {
+        try {
+            String url = fileManager.upload(file.getOriginalFilename(), file.getBytes(), FileType.USER);
+            return new FileData(url);
+        } catch (IOException e) {
+            log.error("获取文件内容失败",e);
+        }
+        return null;
     }
 }

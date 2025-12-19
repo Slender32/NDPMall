@@ -17,6 +17,10 @@ public class UserUpdateRequest {
     @Length(min = 2, max = 20, message = "用户名长度必须在2到20个字符之间")
     private String userName;
 
+    @Schema(description = "头像")
+    @Length(max = 255, message = "头像地址长度不能超过255个字符")
+    private String avatar;
+
     @Schema(description = "年龄", minimum = "0", maximum = "150", example = "25")
     @Range(min = 0, max = 150, message = "年龄不合理")
     private Integer age;

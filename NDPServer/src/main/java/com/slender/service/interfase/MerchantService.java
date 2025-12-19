@@ -7,7 +7,6 @@ import com.slender.dto.user.MerchantUpdateRequest;
 import com.slender.entity.Merchant;
 
 public interface MerchantService extends IService<Merchant> {
-
     void register(Long uid, MerchantRegisterRequest merchantRegisterRequest);
 
     void delete(Long uid, Long mid, LogoffRequest request);

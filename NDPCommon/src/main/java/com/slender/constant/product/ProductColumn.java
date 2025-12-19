@@ -13,5 +13,6 @@ public interface ProductColumn {
     String DESCRIPTION = "description";
     String STATUS = "status";
     String DELETED = "deleted";
+    String IMAGE = "image";
 }
 

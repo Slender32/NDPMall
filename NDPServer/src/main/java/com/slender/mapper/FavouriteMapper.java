@@ -11,4 +11,8 @@ import java.util.List;
 @Mapper
 public interface FavouriteMapper extends BaseMapper<Favourite> {
     List<Product> getList(@Param("uid") Long uid);
+
+    List<Long> getDirtyData();
+
+    int exist(@Param("uid") Long uid, @Param("pid") Long pid);
 }

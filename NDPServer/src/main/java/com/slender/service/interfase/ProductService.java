@@ -5,10 +5,14 @@ import com.slender.dto.product.ProductAddRequest;
 import com.slender.dto.product.ProductUpdateRequest;
 import com.slender.dto.product.ProductPageRequest;
 import com.slender.entity.Product;
+import com.slender.vo.FileData;
 import com.slender.vo.PageData;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 public interface ProductService extends IService<Product> {
-
     Product get(Long pid);
 
     PageData<Product> get(ProductPageRequest request);
@@ -18,4 +22,8 @@ public interface ProductService extends IService<Product> {
     void update(Long pid, ProductUpdateRequest request);
 
     void delete(Long pid);
+
+    FileData updateImage(Long pid, MultipartFile file);
+
+    void export(HttpServletResponse response);
 }

@@ -6,7 +6,22 @@
     <select id="getList" resultType="com.slender.entity.Product">
         select product.pid, product.mid, product.cid, product.create_time, product.update_time, product.product_name,
                product.remain, product.sale_amount, product.price, product.description, product.status, product.deleted
-        from product inner join favourite
-        on product.pid = favourite.pid and favourite.uid = #{uid}
+        from product
+        inner join favourite on product.pid = favourite.pid and favourite.uid = #{uid} and favourite.deleted=0
+        where product.deleted=0
+    </select>
+
+    <select id="getDirtyData" resultType="java.lang.Long">
+        select fid
+        from favourite
+        left outer join user on user.uid = favourite.uid
+        left outer join product on product.pid = favourite.pid
+        where user.uid is null or product.pid is null
+    </select>
+
+    <select id="exist" resultType="java.lang.Integer">
+        select count(*)
+        from favourite
+        where favourite.uid=#{uid} and favourite.pid=#{pid} and favourite.deleted=0
     </select>
 </mapper>

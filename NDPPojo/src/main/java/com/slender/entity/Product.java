@@ -60,6 +60,10 @@ public class Product implements Serializable {
     @DecimalMin(value = "0.00", message = "价格不能为负数")
     private BigDecimal price;
 
+    @Schema(description = "图片URL", example = "https://example.com/product.jpg")
+    @Length(max = 255, message = "图片URL长度不能超过255个字符")
+    private String image;
+
     @Schema(description = "商品描述", example = "高保真音质，续航30小时")
     private String description;
 

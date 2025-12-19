@@ -10,6 +10,7 @@ import com.slender.enumeration.order.OrderStatus;
 import com.slender.exception.order.OrderNotFoundException;
 import com.slender.exception.order.OrderNotPaidSuccessException;
 import com.slender.exception.product.ProductNotFoundException;
+import com.slender.exception.product.ReviewNotFoundException;
 import com.slender.mapper.ReviewMapper;
 import com.slender.repository.OrderRepository;
 import com.slender.repository.ProductRepository;
@@ -48,7 +49,8 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review> impleme
     @Override
     @RemoveCache
     public void delete(Long rid) {
-        this.removeById(rid);
+        final boolean remove = this.removeById(rid);
+        if(!remove) throw new ReviewNotFoundException();
     }
 
     @Override

@@ -58,6 +58,7 @@ public class UserRepository {
                 .eq(UserColumn.UID, uid)
                 .set(UserColumn.UPDATE_TIME, LocalDateTime.now())
                 .set(updateRequest.getUserName()!=null,UserColumn.USER_NAME, updateRequest.getUserName())
+                .set(updateRequest.getAvatar()!=null,UserColumn.AVATAR, updateRequest.getAvatar())
                 .set(updateRequest.getAge()!=null,UserColumn.AGE, updateRequest.getAge())
                 .set(updateRequest.getGender()!=null,UserColumn.GENDER, updateRequest.getGender())
                 .set(updateRequest.getBirthday()!=null,UserColumn.BIRTHDAY, updateRequest.getBirthday())

@@ -19,12 +19,17 @@ import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer
+import org.springframework.security.config.annotation.web.configurers.CorsConfigurer
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.security.web.authentication.logout.LogoutFilter
+import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.CorsConfigurationSource
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource
+import kotlin.coroutines.Continuation
 
 @Configuration
 @EnableMethodSecurity
@@ -69,36 +74,70 @@ open class SecurityConfiguration {
         multiPasswordFilter: MultiPasswordFilter,
         requestTypeFilter: RequestTypeFilter,
         jwtFilter: JwtFilter,
-        captchaFilter: CaptchaFilter
+        captchaFilter: CaptchaFilter,
     ): SecurityFilterChain
         = http
-            .csrf(AbstractHttpConfigurer<*, *>::disable)
-            .sessionManagement { session ->
-                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            }
-            .logout { logout ->
-                logout
-                    .logoutUrl(LOGOUT)
-                    .addLogoutHandler(signOutHandler)
-                    .logoutSuccessHandler(signOutSuccessHandler)
-            }
-            .authorizeHttpRequests { auth ->
-                auth
-                    .requestMatchers("/auth/**").permitAll()
-                    .requestMatchers("/admins/**").hasAuthority(UserConstant.Authority.ADMINISTRATION)
-                    .anyRequest().authenticated()
-            }
-            .addFilterAt(multiPasswordFilter, UsernamePasswordAuthenticationFilter::class.java)
-            .addFilterBefore(captchaFilter, MultiPasswordFilter::class.java)
-            .addFilterBefore(jwtFilter, LogoutFilter::class.java)
-            .addFilterBefore(requestTypeFilter, JwtFilter::class.java)
-            .exceptionHandling { configurer ->
-                configurer
-                    .authenticationEntryPoint(securityExceptionHandler)
-                    .accessDeniedHandler(accessRefuseHandler)
-            }
-            .build()
+        .cors { cors ->
+            cors.configurationSource(corsConfigurationSource())
+        }
+        .csrf(AbstractHttpConfigurer<*, *>::disable)
+        .sessionManagement { session ->
+            session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        }
+        .logout { logout ->
+            logout
+                .logoutUrl(LOGOUT)
+                .addLogoutHandler(signOutHandler)
+                .logoutSuccessHandler(signOutSuccessHandler)
+        }
+        .authorizeHttpRequests { auth ->
+            auth
+                .requestMatchers("/auth/**").permitAll()
+                .requestMatchers("/admins/**").hasAuthority(UserConstant.Authority.ADMINISTRATION)
+                .anyRequest().authenticated()
+        }
+        .addFilterAt(multiPasswordFilter, UsernamePasswordAuthenticationFilter::class.java)
+        .addFilterBefore(captchaFilter, MultiPasswordFilter::class.java)
+        .addFilterBefore(jwtFilter, LogoutFilter::class.java)
+        .addFilterBefore(requestTypeFilter, JwtFilter::class.java)
+        .exceptionHandling { configurer ->
+            configurer
+                .authenticationEntryPoint(securityExceptionHandler)
+                .accessDeniedHandler(accessRefuseHandler)
+        }
+        .build()
 
+    @Bean
+    open fun corsConfigurationSource(): CorsConfigurationSource {
+        val configuration = CorsConfiguration().apply {
+            allowedOrigins = listOf(
+                "http://127.0.0.1:3000",
+                "http://localhost:3000"
+            )
+            allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
+            allowedHeaders = listOf(
+                "Content-Type",
+                "Authorization",
+                "X-Requested-With",
+                "Accept",
+                "Origin",
+                "Access-Control-Request-Method",
+                "Access-Control-Request-Headers",
+                "X-CSRF-TOKEN"
+            )
+            exposedHeaders = listOf(
+                "Authorization",
+                "Access-Control-Allow-Origin",
+                "Access-Control-Allow-Credentials"
+            )
+            allowCredentials = true
+            maxAge = 3600L
+        }
+
+        val source = UrlBasedCorsConfigurationSource()
+        source.registerCorsConfiguration("/**", configuration)
+        return source
+    }
 
     @Bean
     open fun passwordFilter(

@@ -87,10 +87,10 @@ public class ProductRepository {
             .set(request.getProductName() != null, ProductColumn.PRODUCT_NAME, request.getProductName())
             .set(request.getRemain() != null, ProductColumn.REMAIN, request.getRemain())
             .set(request.getPrice() != null, ProductColumn.PRICE, request.getPrice())
+            .set(request.getImage() != null, ProductColumn.IMAGE, request.getImage())
             .set(request.getDescription() != null, ProductColumn.DESCRIPTION, request.getDescription())
             .set(request.getStatus() != null, ProductColumn.STATUS, request.getStatus());
         productMapper.update(condition);
-
     }
 
     public void updateRemain(Long pid, int quantity) {

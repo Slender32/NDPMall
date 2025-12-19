@@ -27,6 +27,14 @@ public interface ExceptionMessage {
     String PRODUCT_NOT_FOUND = "产品不存在";
     String ORDER_NOT_FOUND = "订单不存在";
     String ORDER_NOT_PAID_SUCCESS = "订单未支付成功";
+    String OSS_ERROR = "上传文件失败";
+    String FILE_NAME_NOT_FOUND = "文件名为空";
+    String FILE_NAME_ERROR = "文件名不含后缀";
+    String EXCEL_EXPORT_ERROR = "excel导出失败";
+    String LOGIN_ERROR = "登陆失败";
+    String DUPLICATE_FAVOURITE = "重复收藏";
+    String FAVOURITE_NOT_FOUND = "未收藏该商品";
+    String REVIEW_NOT_FOUND = "评论未找到";
 
     static String getLoginMessage(String column) {
         return (switch (column) {

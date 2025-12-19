@@ -64,12 +64,12 @@ public class Order {
             accessMode = Schema.AccessMode.READ_ONLY)
     private DeleteStatus deleted;
 
-    public Order(Long uid, OrderCreateRequest request) {
+    public Order(Long uid, OrderCreateRequest request,BigDecimal totalAmount) {
         this.uid=uid;
         this.pid=request.getPid();
         this.aid=request.getAid();
         this.quantity=request.getQuantity();
-        this.totalAmount=request.getTotalAmount();
+        this.totalAmount=totalAmount;
         this.status=OrderStatus.UNPAID;
         this.createTime=LocalDateTime.now();
     }

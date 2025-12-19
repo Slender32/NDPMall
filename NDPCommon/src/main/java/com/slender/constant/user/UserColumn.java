@@ -7,6 +7,7 @@ public interface UserColumn {
     String PHONE_NUMBER = "phone_number";
     String UPDATE_TIME = "update_time";
     String CREATE_TIME = "create_time";
+    String AVATAR = "Avatar";
     String AGE = "age";
     String GENDER = "gender";
     String BIRTHDAY = "birthday";

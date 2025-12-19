@@ -7,12 +7,15 @@ import com.slender.dto.user.UserRegisterRequest;
 import com.slender.dto.user.UserResetRequest;
 import com.slender.dto.user.UserUpdateRequest;
 import com.slender.entity.User;
+import com.slender.vo.FileData;
 import com.slender.vo.RefreshData;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
 public interface UserService extends IService<User> {
     Optional<User> getByDataBaseColumn(String column, String value);
+
     Optional<User> getByEmail(String email);
 
     void sendCaptcha(CaptchaRequest captchaRequest);
@@ -28,4 +31,6 @@ public interface UserService extends IService<User> {
     void block(Long userUid);
 
     void logoff(Long uid, LogoffRequest request);
+
+    FileData uploadAvatar(MultipartFile file);
 }

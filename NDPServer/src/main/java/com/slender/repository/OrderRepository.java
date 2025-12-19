@@ -10,6 +10,7 @@ import com.slender.mapper.OrderMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,14 +31,14 @@ public class OrderRepository {
         return Optional.ofNullable(orderMapper.selectById(bid));
     }
 
-    public void update(Long bid, OrderUpdateRequest request) {
-        if(request.getAid() == null && request.getQuantity() == null && request.getTotalAmount() == null) return;
+    public void update(Long bid, OrderUpdateRequest request, BigDecimal totalAmount) {
+        if(request.getAid() == null && request.getQuantity() == null && totalAmount == null) return;
         orderMapper.update(
                 new UpdateWrapper<Order>()
                         .eq(OrderColumn.BID, bid)
                         .set(request.getAid() != null, OrderColumn.AID, request.getAid())
                         .set(request.getQuantity() != null, OrderColumn.QUANTITY, request.getQuantity())
-                        .set(request.getTotalAmount() != null, OrderColumn.TOTAL_AMOUNT, request.getTotalAmount())
+                        .set(totalAmount != null, OrderColumn.TOTAL_AMOUNT, totalAmount)
         );
     }
 

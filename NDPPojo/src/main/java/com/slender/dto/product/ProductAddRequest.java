@@ -31,6 +31,9 @@ public class ProductAddRequest {
     @NotNull(message = "价格不能为空")
     private BigDecimal price;
 
+    @Schema(description = "图片URL", example = "https://example.com/image.jpg")
+    private String image;
+
     @Schema(description = "商品描述", example = "高保真音质，充电五分钟,通话两小时")
     private String description;
 }
