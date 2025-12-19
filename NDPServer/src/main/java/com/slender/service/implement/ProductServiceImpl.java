@@ -7,7 +7,6 @@ import com.slender.config.manager.FileManager;
 import com.slender.dto.product.ProductAddRequest;
 import com.slender.dto.product.ProductUpdateRequest;
 import com.slender.dto.product.ProductPageRequest;
-import com.slender.entity.Order;
 import com.slender.entity.Product;
 import com.slender.enumeration.FileType;
 import com.slender.exception.file.ExcelExportException;
@@ -30,7 +29,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor

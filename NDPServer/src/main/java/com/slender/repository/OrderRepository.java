@@ -28,7 +28,7 @@ public class OrderRepository {
     }
 
     public Optional<Order> get(Long bid) {
-        return Optional.ofNullable(orderMapper.selectById(bid));
+        return Optional.of(orderMapper.selectById(bid));
     }
 
     public void update(Long bid, OrderUpdateRequest request, BigDecimal totalAmount) {
